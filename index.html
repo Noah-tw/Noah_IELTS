@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Noah IELTS">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#58CC02">
+  <title>Noah IELTS Practice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@500&family=Nunito:wght@600;700;800;900&family=Outfit:wght@700;800;900&family=Rubik:wght@500;700;900&display=swap" rel="stylesheet">
+  <!-- Keep every local asset on the same build. This mirrors the original
+       game's cache-busting rule and prevents an old action handler from being
+       mixed with a newly rendered card after deployment. -->
+  <link rel="stylesheet" href="styles.css?v=20260822-v4">
+  <link rel="stylesheet" href="ielts.css?v=20260822-v4">
+  <script>
+    (function () {
+      function setRealVH() {
+        var height = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+        document.documentElement.style.setProperty('--vh100', height + 'px');
+      }
+      setRealVH();
+      window.addEventListener('resize', setRealVH);
+      window.addEventListener('orientationchange', function () { setTimeout(setRealVH, 50); });
+      if (window.visualViewport) window.visualViewport.addEventListener('resize', setRealVH);
+      var standalone = window.navigator.standalone === true ||
+        (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+      if (standalone) document.documentElement.classList.add('is-standalone');
+    })();
+  </script>
+</head>
+<body>
+  <main id="app" aria-live="polite"></main>
+  <noscript>This game needs JavaScript to run.</noscript>
+
+  <script src="data/speaking_source.js?v=20260822-v4"></script>
+  <script src="data/speaking_hints.js?v=20260822-v4"></script>
+  <script src="data/writing_source.js?v=20260822-v4"></script>
+  <script src="data/writing_paraphrases.js?v=20260822-v4"></script>
+  <script src="engine_data.js?v=20260822-v4"></script>
+  <script src="engine_modes.js?v=20260822-v4"></script>
+  <script src="engine_tts.js?v=20260822-v4"></script>
+  <script src="engine_actions.js?v=20260822-v4"></script>
+  <script src="engine_render.js?v=20260822-v4"></script>
+  <script src="engine_session.js?v=20260822-v4"></script>
+</body>
+</html>

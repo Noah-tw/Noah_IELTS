@@ -1,0 +1,1549 @@
+/* IELTS-specific additions. The original workARK stylesheet remains unchanged. */
+
+:root {
+  /* A vivid pink used instead of the wordARK blue tone for Writing paraphrase
+     colour-coding (Noah finds blue flat/uninteresting on the paraphrase screen). */
+  --pink: #FF4FA3;
+  --pink-dk: #D6238A;
+  --pink-lt: #FFE1F1;
+
+  /* A vivid teal used instead of the wordARK yellow/orange tone for Writing
+     colour-coding (Noah doesn't want orange in the Question Card highlights
+     or the paraphrase quiz card). The "orange" tone name and data stay as-is
+     (see writingColorClass() in engine_render.js) — only the colour it
+     renders as changes, same pattern as the pink override above. */
+  --teal: #16C2D6;
+  --teal-dk: #0E93A3;
+  --teal-lt: #D6F7FA;
+}
+
+.ielts-module-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+.ielts-module-card {
+  min-height: 92px;
+  padding: 12px 8px;
+}
+
+.ielts-module-card .l-lang-flag {
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+}
+
+.ielts-module-mark {
+  display: inline-flex;
+  width: 44px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid;
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-family: 'Nunito', sans-serif;
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .7px;
+  line-height: 1;
+}
+
+.ielts-module-mark.speaking-mark {
+  border-color: #0B7DAF;
+  background: var(--blue);
+}
+
+.ielts-module-mark.writing-mark {
+  border-color: #D33131;
+  background: var(--red);
+}
+
+.ielts-module-icon {
+  display: inline-flex;
+  width: 46px;
+  height: 46px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid;
+  border-radius: 15px;
+  color: #FFFFFF;
+  box-shadow: 0 4px 0 rgba(0,0,0,.12);
+}
+
+.ielts-module-icon.speaking-icon {
+  border-color: #075E83;
+  background: #0B7DAF;
+}
+
+.ielts-module-icon.writing-icon {
+  border-color: #6B21A8;
+  background: #9069CD;
+}
+
+.ielts-icon {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+
+.ielts-header-icon {
+  width: 23px;
+  height: 23px;
+}
+
+.ielts-mini-icon {
+  width: 21px;
+  height: 21px;
+}
+
+.btn-lang-sw.module-switch-writing {
+  border-color: var(--purple);
+  background: var(--purple-lt);
+  box-shadow: 0 2px 8px rgba(147,51,234,.18);
+}
+
+.btn-lang-sw.module-switch-writing .blsw-flag,
+.btn-lang-sw.module-switch-writing .blsw-code,
+.gm-lang.module-switch-writing { color: var(--purple-dk); }
+
+.btn-lang-sw.module-switch-speaking .blsw-flag,
+.gm-lang.module-switch-speaking { color: #0B7DAF; }
+
+.gm-lang.module-switch-writing {
+  border-color: var(--purple);
+  background: var(--purple-lt);
+}
+
+.ielts-header-mark,
+.ielts-mini-mark,
+.ielts-mini-pool {
+  color: #0B7DAF;
+  font-family: 'Nunito', sans-serif;
+  font-size: .88rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.ielts-mini-pool { color: var(--ink2); }
+
+.lang-card .ielts-module-mark {
+  width: 46px;
+  height: 32px;
+}
+
+.ielts-module-card small {
+  color: var(--ink3);
+  font-size: .62rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.ielts-module-card.sel small { color: var(--green-dk); }
+
+.source-note {
+  color: var(--ink3);
+  font-size: .66rem;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.ready-icon {
+  font-size: 2.7rem;
+  line-height: 1;
+}
+
+.ready-sub {
+  color: var(--ink2);
+  font-size: .84rem;
+  font-weight: 700;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.speaking-part-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin: auto 0;
+}
+
+.speaking-full-test-card .coin-outer { margin: auto 0; }
+
+.speaking-part-option {
+  display: flex;
+  width: 100%;
+  min-height: 54px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 7px 10px;
+}
+
+.speaking-part-option strong { font-weight: 900; }
+
+.speaking-part-option small {
+  font-size: .66rem;
+  font-weight: 800;
+}
+
+.speaking-part-option-1 {
+  border-color: var(--green-dk);
+  color: var(--green-dk);
+  background: var(--green-lt);
+}
+
+.speaking-part-option-2 {
+  border-color: #0B7DAF;
+  color: #FFFFFF;
+  background: var(--blue);
+}
+
+.speaking-part-option-3 {
+  border-color: #6B21A8;
+  color: #FFFFFF;
+  background: #9069CD;
+}
+
+.speaking-part-wrap { cursor: default; }
+.speaking-part-wrap:active { opacity: 1; }
+
+.speaking-menu-parts-only { grid-template-columns: 1fr; }
+
+.writing-menu-tasks-only { grid-template-columns: 1fr; }
+
+.writing-task-wrap { cursor: default; }
+.writing-task-wrap:active { opacity: 1; }
+
+.writing-task-option-1 {
+  border-color: #075E83;
+  color: #FFFFFF;
+  background: #0B7DAF;
+  box-shadow: 0 3px 0 #075E83;
+}
+
+.writing-task-option-2 {
+  border-color: #6B21A8;
+  color: #FFFFFF;
+  background: #9069CD;
+  box-shadow: 0 3px 0 #6B21A8;
+}
+
+.writing-task-option {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 9px;
+  padding-inline: 11px;
+  text-align: left;
+}
+
+.writing-task-option-icon {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: rgba(255,255,255,.2);
+  font-size: 1.08rem;
+}
+
+.writing-task-option-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.writing-task-option small { color: rgba(255,255,255,.9); }
+
+.writing-filter { min-width: 0; }
+
+.writing-filter .btn-filter-label {
+  font-size: .72rem;
+  text-align: center;
+}
+
+.writing-practice-filter {
+  width: 100%;
+  min-height: 48px;
+  padding: 6px 13px;
+  border-color: var(--purple);
+  background: linear-gradient(90deg, var(--blue-lt), var(--purple-lt));
+}
+
+.writing-filter-icon {
+  flex: 0 0 auto;
+  font-size: 1rem;
+}
+
+.writing-filter-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 1px;
+  text-align: left;
+}
+
+.writing-filter-copy strong {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: .76rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.writing-filter-copy small {
+  overflow: hidden;
+  color: var(--ink3);
+  font-size: .65rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.writing-category-filter {
+  border-color: var(--purple);
+  color: var(--purple-dk);
+  background: var(--purple-lt);
+}
+
+.writing-category-group-label {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 4px 1px;
+  color: var(--ink2);
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .35px;
+  text-transform: uppercase;
+}
+
+.ielts-category-task,
+.ielts-category-all {
+  display: inline-flex;
+  min-width: 28px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--blue);
+  border-radius: 8px;
+  color: #0B7DAF;
+  background: var(--blue-lt);
+  font-size: .62rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.ielts-category-all {
+  border-color: var(--purple);
+  color: var(--purple-dk);
+  background: var(--purple-lt);
+}
+
+.writing-category-list .cat-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.writing-mini-phase {
+  max-width: 120px;
+  overflow: hidden;
+  color: var(--ink3);
+  font-size: .66rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.speaking-pool-filter { width: 100%; }
+
+.speaking-pool-filter .btn-filter-label {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.speaking-no-practice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 12px 0;
+  padding: 20px;
+  color: var(--ink3);
+  font-size: .88rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.speaking-no-practice > span { font-size: 2rem; }
+.speaking-no-practice .btn-ghost { width: 100%; }
+
+.speaking-pool-sheet .sh-title { margin-bottom: 12px; }
+
+.speaking-pool-matrix {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.speaking-pool-row {
+  display: grid;
+  grid-template-columns: 56px repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 5px;
+}
+
+.speaking-pool-part-label {
+  display: flex;
+  align-items: center;
+  color: var(--ink);
+  font-size: .82rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.speaking-pool-option {
+  display: flex;
+  min-width: 0;
+  min-height: 48px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 5px 2px;
+  border: 2px solid var(--border2);
+  border-radius: 10px;
+  color: var(--ink2);
+  background: #FFFFFF;
+  font-family: 'Nunito', sans-serif;
+  font-size: .72rem;
+  font-weight: 900;
+  line-height: 1.05;
+  cursor: pointer;
+}
+
+.speaking-pool-option small {
+  font-size: .66rem;
+  font-weight: 900;
+  line-height: 1;
+  opacity: .8;
+}
+
+.speaking-pool-option:active { transform: scale(.96); }
+.speaking-pool-option:disabled {
+  border-color: var(--border);
+  color: var(--ink3);
+  background: var(--bg);
+  opacity: .42;
+  pointer-events: none;
+}
+
+.speaking-pool-option-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.speaking-pool-state-mark {
+  flex-shrink: 0;
+  font-size: .78rem;
+  line-height: 1;
+}
+
+.speaking-pool-option.on {
+  color: #FFFFFF;
+}
+
+.speaking-pool-option-all.on,
+.writing-pool-option-all.on {
+  border-color: #7E22CE;
+  background: var(--purple);
+  box-shadow: 0 3px 0 #7E22CE;
+}
+
+.speaking-pool-option-new.on,
+.writing-pool-option-new.on {
+  border-color: #0B7DAF;
+  background: var(--blue);
+  box-shadow: 0 3px 0 #0B7DAF;
+}
+
+.speaking-pool-option-unfamiliar.on,
+.writing-pool-option-unfamiliar.on {
+  border-color: #CC7A00;
+  background: var(--yellow);
+  box-shadow: 0 3px 0 #CC7A00;
+}
+
+.speaking-pool-option-mastered.on,
+.writing-pool-option-mastered.on {
+  border-color: var(--green-dk);
+  background: var(--green);
+  box-shadow: 0 3px 0 var(--green-dk);
+}
+
+.speaking-pool-option-none.on,
+.writing-pool-option-none.on {
+  border-color: var(--ink3);
+  background: var(--ink2);
+  box-shadow: 0 3px 0 var(--ink3);
+}
+
+.writing-setup-label {
+  margin: 1px 0 8px;
+  color: var(--ink);
+  font-family: 'Rubik', sans-serif;
+  font-size: .88rem;
+  font-weight: 700;
+}
+
+.writing-setup-divider {
+  height: 2px;
+  margin: 4px 0 14px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+.writing-setup-help {
+  margin: -3px 0 8px;
+  color: var(--ink3);
+  font-size: .7rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.writing-setup-category-list {
+  margin: 0 -6px 14px;
+  padding: 4px 6px 10px;
+}
+
+.writing-setup-category-list > .cat-all {
+  grid-column: 1 / -1;
+  min-height: 58px;
+}
+
+.writing-setup-sheet .btn-close {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin-top: 2px;
+}
+
+.compact-go {
+  min-height: 54px;
+  margin-top: 4px;
+  padding: 14px;
+  font-size: 1rem;
+}
+
+.part-count-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  width: 100%;
+}
+
+.part-count-row span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 4px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  color: var(--ink3);
+  background: var(--bg);
+  font-size: .66rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.part-count-row b {
+  color: var(--ink);
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.reading-counts { grid-template-columns: 1fr 1fr; }
+
+.menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0 12px 14px;
+}
+
+.standalone-filter {
+  width: 100%;
+  min-height: 48px;
+  flex: none;
+}
+
+.blue-badge {
+  border-color: rgba(28,176,246,.25);
+  color: #0B7DAF;
+  background: var(--blue-lt);
+}
+
+.purple-badge {
+  border-color: rgba(147,51,234,.22);
+  color: var(--purple-dk);
+  background: var(--purple-lt);
+}
+
+.cue-box {
+  margin-top: 12px;
+  padding: 13px 14px;
+  border: 2px solid var(--blue);
+  border-radius: var(--r2);
+  background: var(--blue-lt);
+}
+
+.cue-box > span {
+  display: block;
+  margin-bottom: 7px;
+  color: #0B7DAF;
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.cue-box ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 21px;
+}
+
+.cue-box li,
+.cue-box p {
+  color: var(--ink);
+  font-size: .88rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.cue-box p {
+  margin-top: 9px;
+  color: #0B7DAF;
+  font-weight: 900;
+}
+
+.topic-label {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: var(--ink2);
+  font-size: .78rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.speaking-card { border-color: var(--green); }
+.speaking-card.part-2 { border-color: var(--blue); }
+.speaking-card.part-3 { border-color: var(--purple); }
+
+.speaking-question {
+  font-family: 'Rubik', sans-serif;
+  font-size: clamp(1.25rem, 6.3cqw, 1.65rem);
+  font-weight: 800;
+  letter-spacing: -.2px;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.cue-box-large { margin-top: 17px; }
+
+/* Speaking Hint follows the original New Word sentence-carousel pattern:
+   one compact note direction at a time, dots + next, with no stacked answers. */
+.speaking-hint-panel {
+  --intro-accent: var(--yellow);
+  margin-top: 17px;
+  padding: 12px 14px 13px;
+  border: 2px solid var(--yellow);
+  border-radius: var(--r2);
+  background: var(--yellow-lt);
+}
+
+.speaking-hint-nav {
+  margin-bottom: 8px;
+}
+
+.speaking-hint-label {
+  color: var(--yellow-dk);
+  font-size: .74rem;
+  font-weight: 900;
+  letter-spacing: .35px;
+  white-space: nowrap;
+}
+
+.speaking-hint-panel .intro-sent-next {
+  border-color: var(--yellow);
+  color: var(--yellow-dk);
+  background: var(--card);
+}
+
+.speaking-hint-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.speaking-hint-line {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  color: var(--ink);
+  font-family: 'Rubik', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.speaking-hint-line > span {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: var(--yellow);
+}
+
+.speaking-hint-line strong {
+  font-weight: 700;
+}
+
+.speaking-hint-trigger {
+  display: inline-flex;
+  min-width: 64px;
+  min-height: 40px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 9px;
+  border: 2px solid var(--yellow);
+  border-radius: 12px;
+  color: var(--yellow-dk);
+  background: var(--yellow-lt);
+  font-family: 'Nunito', sans-serif;
+  font-size: .76rem;
+  font-weight: 900;
+  white-space: nowrap;
+  box-shadow: 0 3px 0 var(--yellow-dk);
+}
+
+.speaking-hint-trigger.on {
+  border-color: var(--yellow-dk);
+  color: #FFFFFF;
+  background: var(--yellow);
+}
+
+.speaking-hint-trigger:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
+#q-area.speaking-area {
+  justify-content: center;
+}
+
+#q-area.speaking-area.speaking-hint-open {
+  overflow: hidden;
+}
+
+.notice-card {
+  padding: 10px 13px;
+  border: 2px solid var(--yellow);
+  border-radius: var(--r2);
+  color: var(--yellow-dk);
+  background: var(--yellow-lt);
+  font-size: .78rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.blank-slot {
+  color: var(--purple-dk);
+  letter-spacing: 1px;
+}
+
+.answer-reveal {
+  flex-shrink: 0;
+  padding: 13px 15px;
+  border: 2px solid var(--green);
+  border-radius: var(--r2);
+  background: var(--green-lt);
+}
+
+.answer-reveal.incorrect { border-color: var(--yellow); background: var(--yellow-lt); }
+
+.answer-reveal > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.answer-reveal span {
+  color: var(--green-dk);
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+}
+
+.answer-reveal.incorrect span { color: var(--yellow-dk); }
+
+.answer-reveal strong {
+  font-family: 'Rubik', sans-serif;
+  font-size: 1.08rem;
+  font-weight: 900;
+}
+
+.answer-reveal p {
+  margin-top: 7px;
+  color: var(--ink2);
+  font-size: .84rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.answer-reveal small {
+  display: block;
+  margin-top: 5px;
+  color: var(--green-dk);
+  font-size: .76rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.review-subbar { width: 100%; }
+
+.review-subbar .rev-tabs {
+  gap: 8px;
+  padding: 7px 14px;
+  border-bottom: 0;
+}
+
+.review-topic-row {
+  padding: 0 14px 7px;
+  background: var(--card);
+}
+
+#rev-topic-btn {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.review-area {
+  gap: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.review-area #rev-list {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.review-card-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.review-card-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.review-card-details {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1.5px solid var(--border);
+}
+
+.review-sentence-row {
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+}
+
+.review-sentence-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.review-sentence-row .r-sent-trans { padding-bottom: 6px; }
+
+.review-sentence-row .wc-sent-tts {
+  margin-bottom: 4px;
+  transform: scale(.85);
+}
+
+.speaking-review-card .r-word {
+  font-size: .98rem;
+  line-height: 1.42;
+}
+
+.speaking-review-details {
+  color: var(--ink);
+  font-size: .88rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.speaking-review-details > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #0B7DAF;
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .45px;
+  text-transform: uppercase;
+}
+
+.speaking-review-details ul { padding-left: 21px; }
+.speaking-review-details li + li { margin-top: 5px; }
+.speaking-review-details p { margin-top: 8px; color: #0B7DAF; font-weight: 900; }
+
+.writing-review-card .r-word {
+  font-size: .96rem;
+  line-height: 1.42;
+}
+
+.writing-review-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.writing-review-task {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 11px;
+  border: 2px solid var(--blue);
+  border-radius: var(--r3);
+  color: var(--ink2);
+  background: var(--blue-lt);
+  font-size: .8rem;
+  line-height: 1.45;
+}
+
+.writing-review-task span {
+  color: #0B7DAF;
+  font-size: .68rem;
+  font-weight: 900;
+}
+
+.writing-review-section-label {
+  color: var(--ink3);
+  font-size: .67rem;
+  font-weight: 900;
+  letter-spacing: .45px;
+  text-transform: uppercase;
+}
+
+.writing-review-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.writing-review-keywords span {
+  padding: 5px 9px;
+  border: 1.5px solid var(--red);
+  border-radius: 50px;
+  color: #D33131;
+  background: var(--red-lt);
+  font-size: .72rem;
+  font-weight: 900;
+}
+
+.writing-review-points {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.writing-review-points > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border2);
+  border-radius: var(--r3);
+  background: var(--bg);
+  font-size: .75rem;
+  line-height: 1.4;
+}
+
+.writing-review-points span {
+  color: var(--ink2);
+  font-weight: 700;
+}
+
+.review-more-button { margin: 15px 0 20px; }
+
+.review-category-top .fs-section-label {
+  display: block;
+  margin: 0 0 8px;
+}
+
+.review-category-top + .cat-scroll { padding-top: 4px; }
+
+button:disabled { cursor: default; opacity: .48; }
+.mc-opt:disabled { opacity: 1; }
+
+/* Writing flow — original wordARK components + exact Duolingo palette tokens. */
+.ielts-module-switch-grid {
+  grid-template-columns: 1fr 1fr !important;
+}
+
+.writing-ready-screen { padding: 28px 20px 26px; }
+.writing-counts { grid-template-columns: repeat(3, 1fr); }
+
+.writing-subbar {
+  width: 100%;
+  cursor: default;
+}
+
+#q-area.writing-area {
+  overflow: hidden;
+  padding: clamp(9px, 2.2vh, 16px) 14px;
+}
+
+.writing-flow-screen {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(9px, 1.8vh, 13px);
+}
+
+.writing-flow-screen .intro-card { margin-top: 0; }
+
+.writing-flow-next {
+  min-height: 52px;
+  padding: 13px 14px;
+}
+
+.writing-question-meta {
+  padding: 10px 15px 8px;
+  color: var(--ink3);
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .25px;
+  text-align: center;
+}
+
+.writing-question-wrap {
+  border-bottom-color: #A8E4FC;
+  padding: clamp(12px, 2vh, 16px);
+}
+
+.writing-question-copy {
+  color: var(--ink);
+  font-family: 'Rubik', sans-serif;
+  font-size: clamp(.9rem, 4.1cqw, 1.02rem);
+  font-weight: 600;
+  line-height: 1.62;
+}
+
+.writing-point-focus {
+  padding: .06em .24em;
+  border-radius: 6px;
+  color: var(--writing-accent-dark);
+  background: var(--writing-accent-soft);
+  font-weight: 900;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Question Card only: a coloured underline instead of a solid highlight
+   block, so a passage with several tones in it still reads calmly as one
+   paragraph instead of a row of highlighter blocks. */
+.writing-highlight {
+  padding: 0 .05em;
+  border-bottom: 3px solid var(--writing-accent);
+  color: var(--ink);
+  font-weight: 800;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.writing-color-green {
+  --writing-accent: var(--green);
+  --writing-accent-dark: var(--green-dk);
+  --writing-accent-soft: var(--green-lt);
+}
+
+.writing-color-blue {
+  /* Renders pink, not the wordARK blue - see the :root comment above. */
+  --writing-accent: var(--pink);
+  --writing-accent-dark: var(--pink-dk);
+  --writing-accent-soft: var(--pink-lt);
+}
+
+.writing-color-purple {
+  --writing-accent: var(--purple);
+  --writing-accent-dark: var(--purple-dk);
+  --writing-accent-soft: var(--purple-lt);
+}
+
+.writing-color-orange {
+  /* Renders teal, not wordARK orange/yellow - see the :root comment above. */
+  --writing-accent: var(--teal);
+  --writing-accent-dark: var(--teal-dk);
+  --writing-accent-soft: var(--teal-lt);
+}
+
+.writing-question-task {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 11px 16px 14px;
+}
+
+.writing-question-task strong {
+  color: var(--ink2);
+  font-size: .82rem;
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+.writing-question-task span {
+  color: var(--ink3);
+  font-size: .7rem;
+  font-weight: 800;
+}
+
+/* Keyword Card uses the original New Word Card system with Duolingo red/coral. */
+.keyword-card {
+  --intro-accent: var(--red);
+  --intro-accent-lt: var(--red-lt);
+  --intro-accent-dk: #D33131;
+  --intro-accent-glow: rgba(255,75,75,.15);
+  --intro-accent-ring: rgba(255,75,75,.45);
+  --intro-accent-ring-sh: rgba(255,75,75,.22);
+}
+
+.keyword-card .intro-sent-wrap { border-bottom-color: #FFC4C4; }
+
+.keyword-card .intro-sent b {
+  padding: .04em .2em;
+  border-radius: 5px;
+  color: var(--intro-accent-dk);
+  background: #FFFFFF;
+  font-weight: 900;
+}
+
+/* The original New Word Card keeps the headword on one line and lets the
+   renderer shrink it from its measured width. The JS measurement is the
+   final guard; these rules prevent an initial infrastructure / e flash. */
+.keyword-card-screen .intro-word {
+  max-width: 100%;
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.keyword-tip { text-align: left; }
+
+.keyword-list-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px 16px 10px;
+  text-align: center;
+}
+
+.keyword-list-heading-title {
+  color: var(--ink);
+  font-family: 'Rubik', sans-serif;
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+.keyword-list-heading span {
+  color: var(--ink3);
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.keyword-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0 14px 15px;
+}
+
+.keyword-list-item {
+  display: flex;
+  min-height: 49px;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 11px;
+  border: 2px solid var(--border);
+  border-radius: var(--r2);
+  background: var(--card);
+  opacity: 1;
+}
+
+@keyframes keyword-pop-in {
+  0% { opacity: 0; transform: translateY(34px) scale(.9); }
+  68% { opacity: 1; transform: translateY(-3px) scale(1.015); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.keyword-list-item.is-new {
+  animation: keyword-pop-in .44s cubic-bezier(.22, 1.4, .48, 1) both;
+}
+
+.keyword-list-item.is-settled,
+.keyword-list-item.no-anim {
+  opacity: 1;
+  animation: none;
+  transform: none;
+}
+
+.keyword-list-number {
+  display: flex;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  color: var(--intro-accent-dk);
+  background: var(--intro-accent-lt);
+  font-size: .7rem;
+  font-weight: 900;
+}
+
+.keyword-list-body {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.keyword-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.keyword-list-sub {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.keyword-list-term {
+  color: var(--ink);
+  font-family: 'Nunito', sans-serif;
+  font-size: .96rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.keyword-list-item small {
+  color: var(--ink3);
+  font-size: .66rem;
+  font-weight: 700;
+}
+
+.keyword-list-zh {
+  color: var(--intro-accent-dk);
+}
+
+.keyword-list-tts {
+  display: flex;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--intro-accent-lt);
+  border-radius: 50%;
+  background: var(--intro-accent-lt);
+  color: var(--intro-accent-dk);
+  font-size: .74rem;
+  cursor: pointer;
+}
+
+.keyword-list-tts:active { transform: scale(.92); }
+
+.keyword-sequence-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 14px 13px;
+  color: var(--ink3);
+  font-size: .68rem;
+  font-weight: 700;
+}
+
+.keyword-sequence-dots {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.keyword-sequence-dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border2);
+  transition: transform .2s ease, background .2s ease;
+}
+
+.keyword-sequence-dots i.on { background: var(--intro-accent); }
+.keyword-sequence-dots i.newest { transform: scale(1.45); }
+
+.writing-flow-next:disabled {
+  border-color: var(--border2);
+  color: var(--ink3);
+  background: var(--border);
+  box-shadow: none;
+  opacity: 1;
+}
+
+.keyword-meta { padding-bottom: 5px; }
+
+.keyword-pos {
+  border-color: #FFC4C4;
+  color: var(--intro-accent-dk);
+  background: var(--intro-accent-lt);
+}
+
+.keyword-definition { margin-bottom: 8px; }
+
+.keyword-note {
+  margin: 0 16px 15px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--intro-accent);
+  border-radius: var(--r3);
+  color: #9E3434;
+  background: var(--intro-accent-lt);
+  font-size: .78rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.writing-stage {
+  /* No default accent colours here on purpose: the element always also
+     carries a .writing-color-* class (see writingColorClass() in
+     engine_render.js), and that class must win. Declaring the same
+     variables here too — even as a "just in case" fallback — sits later
+     in the cascade than .writing-color-*, so it would always overwrite
+     it and the screen would render blue no matter which tone was meant. */
+  --writing-tree-line: var(--border2);
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(9px, 1.8vh, 13px);
+}
+
+.writing-source-card {
+  padding: clamp(14px, 2.2vh, 18px) 16px;
+}
+
+.writing-source-top {
+  margin-bottom: 9px;
+}
+
+.writing-point-badge {
+  border-color: var(--writing-accent);
+  color: var(--writing-accent-dark);
+  background: var(--writing-accent-soft);
+}
+
+.writing-source-text {
+  padding: 2px 4px 5px;
+  font-size: clamp(1.28rem, 6.2cqw, 1.62rem);
+  line-height: 1.3;
+}
+
+.writing-branches {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: clamp(7px, 1.4vh, 10px);
+  padding-left: 31px;
+}
+
+.writing-branches::before {
+  position: absolute;
+  top: -13px;
+  bottom: 29px;
+  left: 10px;
+  border-left: 3px dashed var(--writing-tree-line);
+  content: "";
+}
+
+.writing-branch {
+  position: relative;
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  padding: 11px 13px;
+  border: 2px solid var(--border);
+  border-radius: var(--r2);
+  background: var(--card);
+  cursor: default;
+  transition: border-color .18s ease, background .18s ease;
+}
+
+.writing-branch::before {
+  position: absolute;
+  top: 50%;
+  left: -23px;
+  width: 23px;
+  border-top: 3px dashed var(--writing-tree-line);
+  content: "";
+}
+
+.writing-branch.revealed {
+  border-color: var(--writing-accent);
+  background: var(--writing-accent-soft);
+  animation: writing-reveal-pop .22s cubic-bezier(.34, 1.45, .64, 1) both;
+}
+
+.writing-phrase {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .28em;
+  color: var(--ink);
+  font-family: 'Rubik', sans-serif;
+  font-size: clamp(1rem, 4.8cqw, 1.18rem);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.writing-cover {
+  display: inline-flex;
+  max-width: 100%;
+  min-height: 36px;
+  align-items: center;
+  padding: .18em .55em;
+  border: 0;
+  border-radius: 10px;
+  color: transparent;
+  background: var(--writing-accent);
+  font: inherit;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: transform .08s ease, filter .12s ease;
+}
+
+.writing-cover span {
+  color: transparent;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.writing-cover:hover { filter: brightness(1.035); }
+
+.writing-cover:active {
+  transform: scale(.97);
+}
+
+.writing-answer {
+  color: var(--writing-accent-dark);
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.writing-instruction {
+  min-height: 18px;
+  padding: 2px 0 0;
+}
+
+.writing-instruction.complete { color: var(--green-dk); }
+
+@keyframes writing-reveal-pop {
+  0% { transform: scale(.975); }
+  70% { transform: scale(1.01); }
+  100% { transform: scale(1); }
+}
+
+@media (max-height: 700px) {
+  #q-area.speaking-area { padding-top: 8px; padding-bottom: 8px; gap: 9px; }
+  .speaking-area .speaking-card { padding-top: 14px; padding-bottom: 13px; }
+  .speaking-area .wc-top { margin-bottom: 10px; }
+  .speaking-hint-open > .q-prompt { display: none; }
+  .speaking-hint-open .speaking-question { line-height: 1.3; }
+  .speaking-hint-panel { margin-top: 12px; padding: 10px 12px; }
+  .speaking-hint-lines { gap: 4px; }
+  /* Keep the dual mode cards at the original WordArk size. The question area
+     already scrolls on short screens, so shrinking both cards made the layout
+     look compressed without improving usability. */
+  #q-area.writing-area { padding-top: 7px; padding-bottom: 7px; }
+  .writing-flow-screen { gap: 7px; }
+  .writing-flow-next { min-height: 46px; padding: 10px 12px; }
+  .writing-question-meta { padding: 6px 12px 5px; }
+  .writing-question-wrap { padding: 9px 11px; }
+  .writing-question-copy { line-height: 1.48; }
+  .writing-question-task { padding: 7px 12px 9px; }
+  .keyword-list-heading { padding: 9px 12px 7px; }
+  .keyword-list { gap: 5px; padding: 0 11px 10px; }
+  .keyword-list-item { min-height: 40px; padding: 5px 8px; }
+  .keyword-card-screen .intro-sent-wrap { padding: 8px 11px; }
+  .keyword-card-screen .intro-word-row { padding-top: 8px; }
+  .keyword-card-screen .intro-dict { margin-bottom: 6px; padding-top: 8px; padding-bottom: 9px; }
+  .keyword-note { margin-bottom: 10px; padding: 7px 10px; }
+  .writing-stage { gap: 8px; }
+  .writing-source-card { padding: 11px 14px; }
+  .writing-source-top { margin-bottom: 5px; }
+  .writing-source-text { padding-bottom: 2px; }
+  .writing-branches { gap: 6px; }
+  .writing-branches::before { top: -8px; bottom: 25px; }
+  .writing-branch { min-height: 49px; padding: 8px 11px; }
+  .writing-cover { min-height: 32px; }
+  .writing-instruction { min-height: 15px; }
+}
+
+@media (max-width: 360px) {
+  .part-count-row span { font-size: .6rem; }
+  .ielts-module-grid { gap: 6px; }
+  .ielts-module-card { min-height: 88px; padding: 10px 4px; }
+  .ielts-module-card small { font-size: .56rem; }
+  .writing-filter { padding-inline: 9px; }
+  .writing-filter .btn-filter-label { font-size: .65rem; }
+}

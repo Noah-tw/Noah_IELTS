@@ -1,0 +1,358 @@
+(function () {
+  "use strict";
+
+  window.WRITING_PARAPHRASE_DATA = [
+    {
+      id: "C12-T3-W2-RAIL",
+      sourceLabel: "Cambridge IELTS 12 · Test 3 · Writing Task 2",
+      sourceQuestion: "In a number of countries, some people think it is necessary to spend large sums of money on constructing new railway lines for very fast trains between cities. Others believe the money should be spent on improving existing public transport.",
+      taskInstruction: "Discuss both these views and give your own opinion.",
+      minimumWords: "Write at least 250 words.",
+      questionSegments: [
+        { text: "In a number of countries, some people " },
+        { text: "think", tone: "green" },
+        { text: " it is " },
+        { text: "necessary to", tone: "blue" },
+        { text: " " },
+        { text: "spend large sums of money on constructing", tone: "purple" },
+        { text: " " },
+        { text: "new railway lines", tone: "orange" },
+        { text: " for very fast trains between cities. Others believe the money should be spent on improving existing public transport." },
+      ],
+      keywords: [
+        {
+          id: "infrastructure",
+          term: "infrastructure",
+          ipa: "/ˈɪnfrəstrʌktʃə/",
+          pos: "noun",
+          meaning: "the basic systems and structures a society needs to function",
+          zh: "基礎建設",
+          zh_def: "社會運作所需的基本系統與設施（如交通、供水、電力等）",
+          note: "Useful for discussing railways, roads, stations and other long-term public facilities.",
+          examples: [
+            "Modern rail infrastructure can improve links between major cities.",
+            "Governments must maintain existing transport infrastructure as well as build new systems.",
+          ],
+          examplesZh: [
+            "現代化的鐵路基礎建設能改善各大城市之間的聯繫。",
+            "政府不僅要興建新系統，也必須維護既有的交通基礎建設。",
+          ],
+        },
+        {
+          id: "congestion",
+          term: "congestion",
+          ipa: "/kənˈdʒestʃən/",
+          pos: "noun",
+          meaning: "heavy traffic or overcrowding that slows movement",
+          zh: "壅塞；擁擠",
+          zh_def: "因車流量或人潮過多而導致的交通堵塞或壅塞",
+          note: "Useful when explaining why cities may need better public transport.",
+          examples: [
+            "Expanding public transport may reduce congestion in city centres.",
+            "A reliable rail network can ease road congestion.",
+          ],
+          examplesZh: [
+            "擴大大眾運輸系統可望減少市中心的交通壅塞。",
+            "穩定可靠的鐵路網能舒緩道路壅塞的情況。",
+          ],
+        },
+        {
+          id: "connectivity",
+          term: "connectivity",
+          ipa: "/ˌkɒnekˈtɪvəti/",
+          pos: "noun",
+          meaning: "the degree to which places are linked and easy to reach",
+          zh: "連結性；連通程度",
+          zh_def: "各地點之間相互連結、易於往來的程度",
+          note: "Useful for describing a transport project's wider regional benefits.",
+          examples: [
+            "High-speed rail can improve regional connectivity.",
+            "Better connectivity may attract investment to smaller cities.",
+          ],
+          examplesZh: [
+            "高速鐵路能提升區域之間的連結性。",
+            "更佳的連結性可能為較小的城市吸引投資。",
+          ],
+        },
+        {
+          id: "cost-effective",
+          term: "cost-effective",
+          ipa: "/ˌkɒst ɪˈfektɪv/",
+          pos: "adjective",
+          meaning: "providing good results without unnecessary expense",
+          zh: "符合成本效益的",
+          zh_def: "能以合理花費達到良好成效，不造成不必要的支出",
+          note: "Useful for comparing new construction with upgrades to existing services.",
+          examples: [
+            "Upgrading existing buses may be more cost-effective than building new railway lines.",
+            "A cost-effective policy balances long-term benefits against construction costs.",
+          ],
+          examplesZh: [
+            "升級既有的公車系統，可能比興建新的鐵路線更符合成本效益。",
+            "符合成本效益的政策，會在長期效益與興建成本之間取得平衡。",
+          ],
+        },
+      ],
+      points: [
+        {
+          id: "opinion-verb",
+          tone: "green",
+          source: "Some people think",
+          sourceSegments: [
+            { text: "Some people " },
+            { text: "think", highlight: true },
+          ],
+          branches: [
+            { lead: "Some people ", reveal: "argue that" },
+            { lead: "Some people ", reveal: "believe" },
+            { lead: "Some people ", reveal: "take the view that" },
+          ],
+        },
+        {
+          id: "necessity",
+          tone: "blue",
+          source: "it is necessary to",
+          sourceSegments: [
+            { text: "it is " },
+            { text: "necessary to", highlight: true },
+          ],
+          branches: [
+            { lead: "it is ", reveal: "essential to" },
+            { lead: "", reveal: "there is a need to" },
+            { lead: "it is ", reveal: "vital to" },
+          ],
+        },
+        {
+          id: "major-spending",
+          tone: "purple",
+          source: "spend large sums of money on constructing",
+          sourceSegments: [
+            { text: "spend large sums of money on constructing", highlight: true },
+          ],
+          branches: [
+            { lead: "", reveal: "invest heavily in building" },
+            { lead: "", reveal: "allocate substantial funding to the construction of" },
+            { lead: "", reveal: "devote considerable resources to developing" },
+          ],
+        },
+        {
+          id: "railway-lines",
+          tone: "orange",
+          source: "new railway lines",
+          sourceSegments: [
+            { text: "new " },
+            { text: "railway lines", highlight: true },
+          ],
+          branches: [
+            { lead: "new ", reveal: "rail links" },
+            { lead: "new ", reveal: "rail infrastructure" },
+            { lead: "", reveal: "a new rail network" },
+          ],
+        },
+      ],
+    },
+  ];
+
+  // Keyword Cards follow the original New Word Card note logic: the note is a
+  // concise Traditional-Chinese usage guide (grammar, countability, pattern or
+  // collocation), not a generic English sentence saying what topic the word is
+  // "useful for".
+  window.WRITING_KEYWORD_NOTES = {
+    "fluctuation": "fluctuation 常用於反覆上下變動，而不是單向上升或下降。常見句型是 fluctuations in + 數值／價格，或 a fluctuation of + 幅度。",
+    "plateau": "作名詞可說 reach a plateau；作動詞可直接說 the figure plateaued at 60%。重點是數值在變動後維持平穩。",
+    "disparity": "比較兩方時常用 a disparity between A and B；指出哪方面有差距則用 a disparity in income／access。常搭配 wide、substantial、regional。",
+    "proportion": "常用 the proportion of + 群體／總數，也可說 a higher proportion of households。proportion 本身是核心名詞，因此可說 The proportion increased。",
+    "redevelopment": "常見搭配是 the redevelopment of an area、undergo redevelopment。它強調把既有地區重新規劃改善，不只是一般的 development。",
+    "pedestrianisation": "pedestrianisation 是英式拼法，常用 the pedestrianisation of + 道路／市中心。它指『改為行人優先的過程』；完成後的區域可說 pedestrian zone。",
+    "accessibility": "可說 improve the accessibility of a service，或 improve accessibility to a place。若直接表示『有機會使用』，通常改用 access to。",
+    "land-use": "當名詞使用通常寫 land use，如 changes in land use；放在另一名詞前才常加連字號，如 land-use planning。",
+    "undergo": "undergo 是及物動詞，後面直接接 change、treatment、development 等名詞，不要說 undergo through。常用於描述製程或變化。",
+    "stage": "描述流程時常用 at the next stage、in the final stage、the stages of production。stage 是一個步驟；多步驟時用複數 stages。",
+    "raw-material": "泛指原料可說 raw material；有多種原料時用 raw materials。常見搭配是 be made from、process、crush raw materials。",
+    "by-product": "固定搭配是 a by-product of + 製程／反應，通常保留連字號。它是主產品之外附帶產生的物質，不等於廢棄物。",
+    "infrastructure": "infrastructure 通常是不可數名詞，不說 an infrastructure 或 infrastructures。常見搭配有 transport infrastructure、invest in infrastructure、upgrade infrastructure。",
+    "congestion": "congestion 通常不可數；交通語境常說 traffic／road congestion，並搭配 reduce、ease、relieve。不要把一般車多都寫成複數 congestions。",
+    "connectivity": "connectivity 通常不可數，可說 improve connectivity between cities 或 connectivity to the rail network。它強調彼此連通的程度。",
+    "cost-effective": "cost-effective 是形容詞，放在名詞前要保留連字號；比較時常用 more cost-effective than。名詞形式是 cost-effectiveness。",
+    "recession": "常見說法有 during a recession、enter a recession、recover from a recession。它指整體經濟活動下滑的一段時期，不只是單一產業衰退。",
+    "productivity": "productivity 通常不可數，常搭配 improve／boost productivity、labour productivity、employee productivity。它比較的是產出與投入，不等於 production 總產量。",
+    "disposable-income": "disposable income 通常不可數，指扣除稅金後可運用的所得。常說 higher／lower disposable income、household disposable income。",
+    "economic-growth": "economic growth 通常不可數，常搭配 promote、drive、sustain economic growth。若要指出幅度，可說 a period／rate of economic growth。",
+    "sustainability": "sustainability 通常不可數，可搭配 environmental、financial、long-term。寫政策效果時常用 improve sustainability；形容詞則是 sustainable。",
+    "biodiversity": "biodiversity 通常不可數，常搭配 protect／preserve biodiversity、a threat to biodiversity、biodiversity loss。它指物種與生態的多樣程度。",
+    "carbon-emissions": "談整體排放量時通常用複數 carbon emissions，常搭配 reduce、cut、lower。也可說 emissions from transport／industry 指明來源。",
+    "conservation": "conservation 通常不可數，常用 the conservation of wildlife／resources。water conservation 指節約用水；nature conservation 則偏向自然保育。",
+    "curriculum": "curriculum 的複數可用 curricula 或 curriculums。常見搭配是 school curriculum、include a subject in the curriculum、curriculum reform。",
+    "literacy": "literacy 通常不可數；加上領域可形成 digital／financial／media literacy。若談識字人口比例，常用 literacy rate。",
+    "vocational-training": "vocational training 通常不可數，常說 receive／provide vocational training、training for a specific occupation。它著重職場所需的實作技能。",
+    "academic-attainment": "academic attainment 通常不可數，常搭配 improve、influence、levels of academic attainment。它著重已達到的學業水準。",
+    "preventive-care": "preventive care 通常不可數，常說 invest in preventive care、access to preventive care。它著重疾病發生前的預防，而不是治療。",
+    "sedentary-lifestyle": "常用 lead／live a sedentary lifestyle；lifestyle 是可數名詞，因此前面通常要有 a。sedentary 也可修飾 job、behaviour。",
+    "well-being": "well-being 通常不可數，常搭配 physical／mental well-being、improve／support well-being。此處指整體身心狀態，不只是短暫的快樂。",
+    "public-health": "public health 通常不可數，指整體人口健康或相關領域。放在名詞前常寫 public-health policy／campaign；一般片語則寫 public health。",
+    "automation": "automation 通常不可數，常用 investment in automation、the automation of tasks。動詞是 automate；被取代的工作可寫 jobs affected by automation。",
+    "digital-literacy": "digital literacy 通常不可數，常搭配 develop／improve digital literacy、digital-literacy skills。它不只指會操作裝置，也包括安全與判讀資訊。",
+    "data-privacy": "data privacy 通常不可數，常見搭配有 data-privacy laws、privacy concerns、protect personal data。privacy 著重資料如何被使用，security 著重防止未授權存取。",
+    "technological-innovation": "泛指科技創新時通常不可數；若談多項具體成果可用 technological innovations。常搭配 drive、foster、encourage innovation。",
+    "social-cohesion": "social cohesion 通常不可數，常搭配 strengthen／promote／undermine social cohesion。它強調社會成員之間的信任與連結。",
+    "inequality": "可說 inequality in income／access，或 inequality between regions。常搭配 reduce、widen、address；具體有多種不平等時可用 inequalities。",
+    "demographic-change": "demographic change 可泛指人口結構變遷；談多項變化時用 demographic changes。demographic 特指年齡、人口、遷移等結構，不等於一般 social change。",
+    "quality-of-life": "固定說法是 quality of life，不說 life quality。常搭配 improve／affect quality of life；若有形容詞可說 a better quality of life。",
+    "job-security": "job security 通常不可數，常說 greater job security、a lack of job security、improve job security。它指工作能否持續，不是工作場所安全。",
+    "workforce": "workforce 是集合名詞，指一個國家或組織的全體勞動人口。常見搭配有 skilled／ageing workforce、enter the workforce、workforce shortage。",
+    "entrepreneurship": "entrepreneurship 通常不可數，常搭配 encourage／foster entrepreneurship。entrepreneur 指創業者；entrepreneurial 則是形容詞。",
+    "work-life-balance": "work-life balance 通常視為不可數概念，常說 achieve／improve work-life balance；形容具體狀態時可說 a healthy work-life balance。",
+    "cultural-heritage": "cultural heritage 通常不可數，常搭配 preserve／protect cultural heritage。可數的具體地點則說 heritage sites，不常說 heritages。",
+    "commercialisation": "commercialisation 是英式拼法，常用 the commercialisation of sport／culture。動詞是 commercialise，表示逐漸以營利為主要考量。",
+    "consumer-behaviour": "consumer behaviour 通常作不可數概念，常搭配 influence／shape consumer behaviour。英式拼法是 behaviour；美式英文寫 behavior。",
+    "social-norms": "social norms 通常用複數，常搭配 follow／challenge／reshape social norms。若指出規範內容，可說 norms governing behaviour。",
+    "resource-allocation": "resource allocation 通常不可數，可說 the allocation of funds to education，或 resource allocation between two services。動詞是 allocate。",
+    "long-term-implications": "通常用複數 long-term implications，常接 implications for + 對象，或 implications of + 行動。long-term 放在名詞前要保留連字號。",
+    "equitable-access": "equitable access 通常不可數，後面接 to：equitable access to education／healthcare。equitable 強調依需求達到公平，不完全等同每人一樣的 equal。",
+    "public-expenditure": "public expenditure 通常不可數，常用 expenditure on + 項目、increase／reduce public expenditure。較口語的近義說法是 government spending。"
+  };
+
+  // Every Keyword Card has three examples, matching the original New Word
+  // Card rhythm. Keeping the third example in one keyed table also lets the
+  // special Cambridge set and the reusable topic packs share exactly the same
+  // learning content.
+  window.WRITING_KEYWORD_THIRD_EXAMPLES = {
+    "fluctuation": { en: "The monthly figures displayed a slight fluctuation before stabilising.", zh: "每月數據在趨於穩定前曾出現小幅波動。" },
+    "plateau": { en: "After a decade of growth, the figure reached a plateau.", zh: "經過十年的成長後，該數據進入平穩期。" },
+    "disparity": { en: "A clear disparity remained in household income across the regions.", zh: "各地區的家庭收入仍存在明顯差距。" },
+    "proportion": { en: "A smaller proportion of commuters travelled by bus.", zh: "較少比例的通勤者搭乘公車。" },
+    "redevelopment": { en: "The redevelopment of the harbour created more public space.", zh: "港區的重新開發創造了更多公共空間。" },
+    "pedestrianisation": { en: "Pedestrianisation made the town centre safer for visitors.", zh: "行人徒步區化讓市中心對訪客而言更安全。" },
+    "accessibility": { en: "The new entrance improved accessibility for wheelchair users.", zh: "新的入口提升了輪椅使用者的無障礙程度。" },
+    "land-use": { en: "The maps illustrate changes in land use around the river.", zh: "這些地圖呈現河流周邊土地使用的變化。" },
+    "undergo": { en: "The raw material must undergo several stages of processing.", zh: "原料必須經過數個加工階段。" },
+    "stage": { en: "At the final stage, the finished product is packaged.", zh: "在最後階段，成品會被包裝。" },
+    "raw-material": { en: "The raw material is crushed before being heated.", zh: "原料在加熱前會先被粉碎。" },
+    "by-product": { en: "Steam is produced as a by-product of the process.", zh: "蒸氣是該製程產生的副產品。" },
+    "infrastructure": { en: "Reliable transport infrastructure supports long-term economic growth.", zh: "可靠的交通基礎建設能支持長期經濟成長。" },
+    "congestion": { en: "Charging drivers at peak times could relieve traffic congestion.", zh: "在尖峰時段向駕駛收費或可舒緩交通壅塞。" },
+    "connectivity": { en: "Improved rail connectivity gives rural residents better access to jobs.", zh: "改善鐵路連結性能讓鄉村居民更容易取得工作機會。" },
+    "cost-effective": { en: "Preventive care is a cost-effective way to reduce hospital demand.", zh: "預防性照護是降低醫院需求且符合成本效益的方法。" },
+    "recession": { en: "Many small firms struggle to survive during a recession.", zh: "許多小型企業在經濟衰退期間難以維持營運。" },
+    "productivity": { en: "Better training can boost productivity across the workforce.", zh: "更完善的訓練能提升整體勞動力的生產力。" },
+    "disposable-income": { en: "Higher rent leaves young adults with less disposable income.", zh: "較高的房租讓年輕人的可支配所得減少。" },
+    "economic-growth": { en: "Stable institutions are essential for sustainable economic growth.", zh: "穩定的制度對永續經濟成長至關重要。" },
+    "sustainability": { en: "Public transport can improve the sustainability of urban development.", zh: "大眾運輸能提升都市發展的永續性。" },
+    "biodiversity": { en: "Intensive farming may cause a decline in biodiversity.", zh: "集約農業可能造成生物多樣性下降。" },
+    "carbon-emissions": { en: "Remote work may lower carbon emissions from daily commuting.", zh: "遠距工作可能降低每日通勤所產生的碳排放。" },
+    "conservation": { en: "Tourism revenue can fund wildlife conservation.", zh: "觀光收入可用來資助野生動物保育。" },
+    "curriculum": { en: "Environmental education deserves a place in the national curriculum.", zh: "環境教育應在國家課程中占有一席之地。" },
+    "literacy": { en: "Improving health literacy can help patients make informed choices.", zh: "提升健康素養能幫助病患做出有根據的選擇。" },
+    "vocational-training": { en: "High-quality vocational training prepares learners for skilled employment.", zh: "高品質的職業訓練能讓學習者為技術工作做好準備。" },
+    "academic-attainment": { en: "Regular attendance is closely linked to academic attainment.", zh: "規律出席與學業成就密切相關。" },
+    "preventive-care": { en: "Access to preventive care can detect illness at an earlier stage.", zh: "取得預防性醫療照護能更早發現疾病。" },
+    "sedentary-lifestyle": { en: "Children may develop a sedentary lifestyle if screen time is excessive.", zh: "若螢幕使用時間過長，兒童可能養成久坐少動的生活型態。" },
+    "well-being": { en: "Flexible schedules may improve workers' well-being.", zh: "彈性工時可能改善勞工的身心健康。" },
+    "public-health": { en: "Clean drinking water is a fundamental public health priority.", zh: "乾淨的飲用水是公共衛生的基本優先事項。" },
+    "automation": { en: "Routine administrative work is increasingly handled through automation.", zh: "例行行政工作愈來愈常透過自動化處理。" },
+    "digital-literacy": { en: "Older adults may need support to build digital literacy.", zh: "年長者可能需要協助來培養數位素養。" },
+    "data-privacy": { en: "Schools must protect data privacy when using learning apps.", zh: "學校使用學習應用程式時必須保護資料隱私。" },
+    "technological-innovation": { en: "Technological innovation can make renewable energy more affordable.", zh: "科技創新能讓再生能源更容易負擔。" },
+    "social-cohesion": { en: "Community events can promote social cohesion among residents.", zh: "社區活動能促進居民之間的社會凝聚力。" },
+    "inequality": { en: "Unequal internet access can deepen educational inequality.", zh: "網路取得機會不均可能加深教育不平等。" },
+    "demographic-change": { en: "Rapid demographic change requires long-term housing policies.", zh: "快速的人口結構變遷需要長期住宅政策。" },
+    "quality-of-life": { en: "Less traffic noise would improve the quality of life in cities.", zh: "減少交通噪音能改善城市生活品質。" },
+    "job-security": { en: "Temporary workers often have less job security.", zh: "臨時工作者通常擁有較低的工作保障。" },
+    "workforce": { en: "Affordable childcare can help more parents rejoin the workforce.", zh: "可負擔的托育服務能幫助更多家長重返勞動市場。" },
+    "entrepreneurship": { en: "Access to credit can encourage entrepreneurship in rural areas.", zh: "取得信貸能鼓勵鄉村地區的創業活動。" },
+    "work-life-balance": { en: "Remote work does not automatically create a better work-life balance.", zh: "遠距工作不一定會自動帶來更好的工作與生活平衡。" },
+    "cultural-heritage": { en: "Local communities should help manage their cultural heritage.", zh: "在地社區應參與管理自己的文化資產。" },
+    "commercialisation": { en: "Excessive commercialisation may weaken a site's cultural value.", zh: "過度商業化可能削弱一處景點的文化價值。" },
+    "consumer-behaviour": { en: "Clear food labels can influence consumer behaviour.", zh: "清楚的食品標示能影響消費者行為。" },
+    "social-norms": { en: "Education can gradually change harmful social norms.", zh: "教育能逐步改變有害的社會規範。" },
+    "resource-allocation": { en: "Transparent resource allocation can increase public trust.", zh: "透明的資源分配能提高大眾信任。" },
+    "long-term-implications": { en: "Policymakers must assess the long-term implications of automation.", zh: "政策制定者必須評估自動化的長期影響。" },
+    "equitable-access": { en: "Online services do not guarantee equitable access for every citizen.", zh: "線上服務並不保證每位公民都能公平使用。" },
+    "public-expenditure": { en: "Preventive programmes may reduce public expenditure on emergency care.", zh: "預防計畫可能降低緊急醫療方面的公共支出。" }
+  };
+
+  function keyword(id, term, ipa, pos, meaning, zh, zhDef, note, example1, example2, example1Zh, example2Zh) {
+    return { id, term, ipa, pos, meaning, zh, zh_def: zhDef, note: window.WRITING_KEYWORD_NOTES[id] || note, examples: [example1, example2], examplesZh: [example1Zh, example2Zh] };
+  }
+
+  window.WRITING_KEYWORD_PACKS = {
+    task1Data: [
+      keyword("fluctuation", "fluctuation", "/ˌflʌktʃuˈeɪʃən/", "noun", "a rise and fall in level or amount", "波動", "數值或水準忽高忽低、反覆起伏的變化", "Useful for describing data that changes repeatedly rather than moving in one direction.", "The graph shows a marked fluctuation in metal prices.", "There was little fluctuation in the figure after 2015.", "這張圖表顯示金屬價格出現明顯的波動。", "2015年後，這項數據幾乎沒有太大的波動。"),
+      keyword("plateau", "plateau", "/ˈplætəʊ/", "noun / verb", "a period when a value stops rising or falling", "趨於平穩（停滯期）", "數值不再上升或下降、維持穩定的一段時期", "Use it when a trend becomes stable after a change.", "Sales reached a plateau at approximately 60 million units.", "The rate plateaued during the final three years.", "銷售量在達到約六千萬件之後便趨於平穩。", "這項比率在最後三年趨於平穩、不再變動。"),
+      keyword("disparity", "disparity", "/dɪˈspærəti/", "noun", "a noticeable difference between two figures or groups", "差距；不均", "兩個數據或群體之間明顯可見的差異", "Useful for highlighting a large comparison in a chart or table.", "The chart reveals a substantial disparity between the two age groups.", "This disparity narrowed over the period shown.", "這張圖表顯示這兩個年齡層之間存在顯著的差距。", "在圖表所示的期間內，這項差距逐漸縮小。"),
+      keyword("proportion", "proportion", "/prəˈpɔːʃən/", "noun", "a share or percentage of a whole", "比例；佔比", "某部分佔整體的份額或百分比", "A precise alternative to percentage when describing part of a total.", "The proportion of households owning a car increased steadily.", "Women accounted for the largest proportion of respondents.", "擁有汽車的家庭比例穩定成長。", "女性在受訪者中所佔的比例最高。"),
+    ],
+    task1Map: [
+      keyword("redevelopment", "redevelopment", "/ˌriːdɪˈveləpmənt/", "noun", "the process of changing and improving an area", "重新開發", "對某地區進行改造、提升的過程", "Useful when a map compares a place before and after planned changes.", "The redevelopment will replace farmland with housing.", "Major redevelopment occurred around the town centre.", "這項重新開發計畫將以住宅取代農地。", "市鎮中心周邊經歷了大規模的重新開發。"),
+      keyword("pedestrianisation", "pedestrianisation", "/pəˌdestriənaɪˈzeɪʃən/", "noun", "the conversion of an area for people on foot rather than vehicles", "行人徒步化", "將某區域改為以行人為主、限制車輛通行的過程", "Useful for town-centre and street-plan questions.", "Pedestrianisation transformed the central shopping street.", "The proposal includes the pedestrianisation of the northern road.", "行人徒步化徹底改變了這條市中心的購物街。", "這項提案包含將北側道路改為行人徒步區。"),
+      keyword("accessibility", "accessibility", "/əkˌsesəˈbɪləti/", "noun", "how easy a place is to reach or use", "可及性；便利性", "抵達或使用某地、某服務的容易程度", "Useful for describing new roads, entrances, paths and public facilities.", "A new entrance will improve accessibility to the station.", "The bridge increased the site's accessibility from the east.", "新設的出入口將提升車站的可及性。", "這座橋提升了從東側前往該地點的便利性。"),
+      keyword("land-use", "land use", "/ˈlænd juːs/", "noun", "the purpose for which an area of land is used", "土地利用", "一塊土地被規劃、使用的方式或目的", "Useful for grouping housing, industry, recreation and transport features.", "The most significant land use change was the expansion of housing.", "Industrial land use declined after redevelopment.", "最顯著的土地利用變化，就是住宅用地的擴張。", "重新開發之後，工業用地的比例隨之下降。"),
+    ],
+    task1Process: [
+      keyword("undergo", "undergo", "/ˌʌndəˈɡəʊ/", "verb", "to experience a process or change", "經歷", "經歷某個過程或產生變化", "Useful for explaining what happens to a material at a particular stage.", "The raw material undergoes several stages of treatment.", "The mixture undergoes heating before it is filtered.", "這項原料會經歷好幾個處理階段。", "這項混合物在過濾之前會先經過加熱處理。"),
+      keyword("stage", "stage", "/steɪdʒ/", "noun", "one step in a process or sequence", "階段", "一連串過程或程序中的其中一個步驟", "Use it to organise a process description clearly.", "At the next stage, the liquid is transferred to a tank.", "The final stage produces the finished fabric.", "在下一個階段，這些液體會被輸送到儲槽中。", "最後一個階段會產出成品布料。"),
+      keyword("raw-material", "raw material", "/ˌrɔː məˈtɪəriəl/", "noun", "a basic substance used to make a product", "原料", "用來製造產品的基本物質", "Useful in manufacturing and natural-process diagrams.", "Sugar cane is the principal raw material in this process.", "The raw material is crushed before further treatment.", "甘蔗是這道製程中主要使用的原料。", "這項原料會先經過壓碎，才進行後續處理。"),
+      keyword("by-product", "by-product", "/ˈbaɪ prɒdʌkt/", "noun", "a secondary substance produced during a process", "副產品", "在製造過程中額外產生的次要物質", "Useful when a diagram shows an additional output besides the main product.", "Heat is generated as a by-product of the reaction.", "The process creates a useful by-product at the final stage.", "這場反應會產生熱，作為其副產品。", "這道製程會在最後階段產出一項有用的副產品。"),
+    ],
+    transport: [
+      keyword("infrastructure", "infrastructure", "/ˈɪnfrəstrʌktʃə/", "noun", "the basic systems and structures a society needs", "基礎建設", "社會運作所需的基本系統與設施（如交通、供水、電力等）", "Useful for railways, roads, stations and other long-term public facilities.", "Modern rail infrastructure can improve links between major cities.", "Governments must maintain existing transport infrastructure.", "現代化的鐵路基礎建設能改善各大城市之間的聯繫。", "政府必須維護既有的交通基礎建設。"),
+      keyword("congestion", "congestion", "/kənˈdʒestʃən/", "noun", "heavy traffic or overcrowding that slows movement", "壅塞；擁擠", "因車流量或人潮過多而導致的交通堵塞或壅塞", "Useful when explaining why cities need better public transport.", "Expanding public transport may reduce congestion in city centres.", "A reliable rail network can ease road congestion.", "擴大大眾運輸系統可望減少市中心的交通壅塞。", "穩定可靠的鐵路網能舒緩道路壅塞的情況。"),
+      keyword("connectivity", "connectivity", "/ˌkɒnekˈtɪvəti/", "noun", "the degree to which places are linked and easy to reach", "連結性；連通程度", "各地點之間相互連結、易於往來的程度", "Useful for describing wider regional benefits.", "High-speed rail can improve regional connectivity.", "Better connectivity may attract investment to smaller cities.", "高速鐵路能提升區域之間的連結性。", "更佳的連結性可能為較小的城市吸引投資。"),
+      keyword("cost-effective", "cost-effective", "/ˌkɒst ɪˈfektɪv/", "adjective", "providing good results without unnecessary expense", "符合成本效益的", "能以合理花費達到良好成效，不造成不必要的支出", "Useful for comparing construction with upgrades to existing services.", "Upgrading buses may be more cost-effective than building new lines.", "A cost-effective policy balances benefits against construction costs.", "升級公車系統可能比興建新路線更符合成本效益。", "符合成本效益的政策，會在效益與興建成本之間取得平衡。"),
+    ],
+    economy: [
+      keyword("recession", "recession", "/rɪˈseʃən/", "noun", "a period when economic activity declines", "經濟衰退", "經濟活動明顯下滑的一段時期", "Useful for explaining falling income, employment, spending or production.", "Household spending often falls during a recession.", "The recession led to a sharp rise in unemployment.", "在經濟衰退期間，家庭支出通常會下滑。", "這波經濟衰退導致失業率大幅攀升。"),
+      keyword("productivity", "productivity", "/ˌprɒdʌkˈtɪvəti/", "noun", "the amount produced in relation to time or resources", "生產力", "相對於投入的時間或資源所產出的成果", "Useful for discussing work, business and economic performance.", "Flexible working can improve employee productivity.", "Higher productivity may support long-term economic growth.", "彈性工作制能提升員工的生產力。", "較高的生產力有助於支撐長期的經濟成長。"),
+      keyword("disposable-income", "disposable income", "/dɪˌspəʊzəbəl ˈɪnkʌm/", "noun", "money available after taxes and essential costs", "可支配所得", "扣除稅金與必要開銷後，個人可自由運用的所得", "Useful for consumer spending and living-standard topics.", "Families with more disposable income can save a larger proportion.", "Rising prices reduce household disposable income.", "可支配所得較高的家庭，能存下較大比例的收入。", "物價上漲會壓縮家庭的可支配所得。"),
+      keyword("economic-growth", "economic growth", "/ˌiːkəˈnɒmɪk ɡrəʊθ/", "noun", "an increase in the value of goods and services produced", "經濟成長", "一國商品與服務產值的增加", "Useful when evaluating government priorities and national progress.", "Investment in skills can promote economic growth.", "Economic growth alone does not guarantee social well-being.", "投資於技能培養有助於促進經濟成長。", "光是經濟成長，並不能保證社會的福祉。"),
+    ],
+    environment: [
+      keyword("sustainability", "sustainability", "/səˌsteɪnəˈbɪləti/", "noun", "the ability to continue without exhausting natural resources", "永續性", "在不耗盡自然資源的前提下得以持續運作的能力", "Useful for evaluating long-term environmental policies.", "Sustainability should guide decisions about transport and energy.", "The policy improves both efficiency and sustainability.", "永續性應是交通與能源相關決策的重要考量。", "這項政策同時提升了效率與永續性。"),
+      keyword("biodiversity", "biodiversity", "/ˌbaɪəʊdaɪˈvɜːsəti/", "noun", "the variety of plant and animal life", "生物多樣性", "動植物種類的豐富與多樣程度", "Useful for species loss, conservation and habitat topics.", "Habitat destruction poses a serious threat to biodiversity.", "Protecting biodiversity requires coordinated action.", "棲地遭到破壞對生物多樣性構成嚴重威脅。", "保護生物多樣性需要各方協調合作。"),
+      keyword("carbon-emissions", "carbon emissions", "/ˈkɑːbən ɪˌmɪʃənz/", "noun", "carbon gases released into the atmosphere", "碳排放", "釋放到大氣中的碳相關氣體", "Useful for transport, aviation, industry and climate questions.", "Public transport can reduce carbon emissions.", "The industry must lower its carbon emissions.", "大眾運輸能減少碳排放。", "這個產業必須降低本身的碳排放量。"),
+      keyword("conservation", "conservation", "/ˌkɒnsəˈveɪʃən/", "noun", "the protection of nature and resources", "保育；資源保護", "對自然環境與資源進行保護", "Useful when proposing environmental solutions.", "Conservation programmes can protect endangered species.", "Water conservation should be encouraged in dry regions.", "保育計畫能夠保護瀕危物種。", "在乾旱地區應鼓勵推行節水（水資源保育）。"),
+    ],
+    education: [
+      keyword("curriculum", "curriculum", "/kəˈrɪkjələm/", "noun", "the subjects and content taught by a school", "課程", "學校所教授的科目與內容安排", "Useful for questions about what students should learn.", "Schools should include financial literacy in the curriculum.", "A balanced curriculum combines academic and practical subjects.", "學校應將理財素養納入課程之中。", "均衡的課程會兼顧學術與實務科目。"),
+      keyword("literacy", "literacy", "/ˈlɪtərəsi/", "noun", "the ability to read, write or use knowledge in a field", "識讀能力；素養", "在某個領域中讀寫或運用知識的能力", "Useful for education, language and digital-skills topics.", "Early literacy has a lasting effect on academic progress.", "Digital literacy is increasingly important at work.", "早期的識讀能力對日後的學業表現有長遠的影響。", "數位素養在職場上越來越重要。"),
+      keyword("vocational-training", "vocational training", "/vəʊˌkeɪʃənəl ˈtreɪnɪŋ/", "noun", "education that develops skills for a specific occupation", "職業訓練", "培養特定職業所需技能的教育", "Useful when comparing academic study with employment preparation.", "Vocational training can address shortages of skilled workers.", "Some students benefit more from vocational training than university study.", "職業訓練有助於緩解技術人力短缺的問題。", "對某些學生而言，職業訓練比大學教育更能帶來實質幫助。"),
+      keyword("academic-attainment", "academic attainment", "/ˌækədemɪk əˈteɪnmənt/", "noun", "the level of educational achievement reached", "學業成就", "所達到的教育學習成果水準", "Useful for discussing school outcomes and inequality.", "Family income can influence academic attainment.", "Smaller classes may improve academic attainment.", "家庭收入可能會影響學業成就。", "縮小班級規模或許能提升學業成就。"),
+    ],
+    health: [
+      keyword("preventive-care", "preventive care", "/prɪˌventɪv ˈkeə/", "noun", "healthcare intended to prevent illness", "預防性醫療照護", "以預防疾病為目的的醫療照護", "Useful for public-health policy and medical spending.", "Preventive care can reduce pressure on hospitals.", "Governments should invest more in preventive care.", "預防性醫療照護能減輕醫院的負擔。", "政府應該投入更多資源在預防性醫療照護上。"),
+      keyword("sedentary-lifestyle", "sedentary lifestyle", "/ˈsedəntri ˈlaɪfstaɪl/", "noun", "a way of life involving too little physical activity", "久坐少動的生活型態", "身體活動量過少的一種生活方式", "Useful for exercise, technology and obesity topics.", "A sedentary lifestyle increases the risk of chronic disease.", "Office work can encourage a sedentary lifestyle.", "久坐少動的生活型態會提高罹患慢性疾病的風險。", "辦公室工作容易養成久坐少動的生活型態。"),
+      keyword("well-being", "well-being", "/ˌwel ˈbiːɪŋ/", "noun", "a person's physical and mental health and happiness", "身心健康與幸福感", "一個人身心健康與快樂滿足的整體狀態", "Useful when discussing broader outcomes than health alone.", "Regular exercise supports mental well-being.", "Long working hours may damage employee well-being.", "規律運動有助於維持心理健康。", "過長的工時可能損害員工的身心健康。"),
+      keyword("public-health", "public health", "/ˌpʌblɪk ˈhelθ/", "noun", "the health of the population as a whole", "公共衛生", "整體人口的健康狀況", "Useful for government action on food, medicine and prevention.", "Sugar consumption has become a major public health concern.", "Public health campaigns can change behaviour.", "糖分攝取已成為公共衛生的一大隱憂。", "公共衛生宣導能改變人們的行為。"),
+    ],
+    technology: [
+      keyword("automation", "automation", "/ˌɔːtəˈmeɪʃən/", "noun", "the use of technology to perform tasks automatically", "自動化", "運用科技自動執行任務", "Useful for employment, industry and driverless-vehicle topics.", "Automation can improve efficiency but displace some workers.", "The factory invested heavily in automation.", "自動化能提升效率，卻也可能使部分勞工被取代。", "這間工廠在自動化方面投入大量資金。"),
+      keyword("digital-literacy", "digital literacy", "/ˌdɪdʒɪtəl ˈlɪtərəsi/", "noun", "the ability to use digital tools effectively and safely", "數位素養", "有效且安全地運用數位工具的能力", "Useful for education, online information and workplace topics.", "Schools should develop students' digital literacy.", "Digital literacy helps users evaluate online sources.", "學校應培養學生的數位素養。", "數位素養能幫助使用者判斷網路資訊的可信度。"),
+      keyword("data-privacy", "data privacy", "/ˈdeɪtə ˌprɪvəsi/", "noun", "the protection of personal information", "資料隱私", "對個人資訊的保護", "Useful for smartphones, online services and new technology.", "Consumers are increasingly concerned about data privacy.", "Strong laws can improve data privacy.", "消費者對資料隱私的關注與日俱增。", "完善的法律能提升資料隱私的保障。"),
+      keyword("technological-innovation", "technological innovation", "/ˌteknəˈlɒdʒɪkəl ˌɪnəˈveɪʃən/", "noun", "the development of new or improved technology", "科技創新", "開發新穎或改良科技的過程", "Useful when weighing progress against social costs.", "Technological innovation can transform public services.", "Investment encourages technological innovation.", "科技創新能徹底改變公共服務的樣貌。", "投資能促進科技創新。"),
+    ],
+    society: [
+      keyword("social-cohesion", "social cohesion", "/ˌsəʊʃəl kəʊˈhiːʒən/", "noun", "the strength of relationships and trust within society", "社會凝聚力", "社會中人際關係與互信的緊密程度", "Useful for community, culture and cooperation topics.", "Shared public spaces can strengthen social cohesion.", "Severe inequality may weaken social cohesion.", "共享的公共空間能強化社會凝聚力。", "嚴重的不平等可能削弱社會凝聚力。"),
+      keyword("inequality", "inequality", "/ˌɪnɪˈkwɒləti/", "noun", "an unfair difference in wealth, opportunity or treatment", "不平等", "在財富、機會或待遇上不公平的差異", "Useful for housing, education, health and income topics.", "Economic inequality limits access to education.", "The policy could reduce regional inequality.", "經濟上的不平等限制了獲得教育的機會。", "這項政策可望縮小區域間的不平等。"),
+      keyword("demographic-change", "demographic change", "/ˌdeməˈɡræfɪk tʃeɪndʒ/", "noun", "a change in the size or structure of a population", "人口結構變遷", "人口規模或組成結構的改變", "Useful for ageing, migration and urbanisation topics.", "Demographic change is increasing demand for healthcare.", "Rural migration can accelerate demographic change.", "人口結構變遷正推升醫療照護的需求。", "鄉村人口外移會加速人口結構的變遷。"),
+      keyword("quality-of-life", "quality of life", "/ˌkwɒləti əv ˈlaɪf/", "noun", "overall comfort, health and satisfaction in daily life", "生活品質", "日常生活中整體的舒適、健康與滿意程度", "Useful for evaluating social and economic outcomes.", "Green spaces can improve residents' quality of life.", "Higher income does not always guarantee a better quality of life.", "綠地能提升居民的生活品質。", "收入較高，並不必然保證更好的生活品質。"),
+    ],
+    work: [
+      keyword("job-security", "job security", "/ˈdʒɒb sɪˌkjʊərəti/", "noun", "the likelihood that a person will keep their job", "工作保障", "個人能持續保有工作的穩定程度", "Useful for employment, automation and self-employment topics.", "Permanent contracts usually provide greater job security.", "Automation may reduce job security in some industries.", "永久聘僱合約通常能提供較高的工作保障。", "自動化可能降低某些產業的工作保障。"),
+      keyword("workforce", "workforce", "/ˈwɜːkfɔːs/", "noun", "all the people available for work", "勞動力", "可投入工作的全部人力", "Useful for skills, migration and economic policy.", "An ageing workforce can create labour shortages.", "Training helps the workforce adapt to new technology.", "勞動力人口老化可能導致人力短缺。", "訓練有助於勞動力適應新科技。"),
+      keyword("entrepreneurship", "entrepreneurship", "/ˌɒntrəprəˈnɜːʃɪp/", "noun", "the activity of starting and running businesses", "創業（精神）", "創立並經營事業的活動", "Useful for self-employment and innovation topics.", "Entrepreneurship can create jobs and encourage innovation.", "Schools can teach practical skills for entrepreneurship.", "創業活動能創造就業機會並帶動創新。", "學校可以教授與創業相關的實用技能。"),
+      keyword("work-life-balance", "work-life balance", "/ˌwɜːk laɪf ˈbæləns/", "noun", "a healthy division between work and personal life", "工作與生活的平衡", "工作與個人生活之間健康的分配", "Useful for working hours, remote work and well-being.", "A shorter week may improve work-life balance.", "Poor work-life balance can cause stress.", "縮短工時或許能改善工作與生活的平衡。", "工作與生活失衡可能造成壓力。"),
+    ],
+    culture: [
+      keyword("cultural-heritage", "cultural heritage", "/ˌkʌltʃərəl ˈherɪtɪdʒ/", "noun", "traditions, places and objects inherited from the past", "文化資產", "從過去傳承下來的傳統、地點與文物", "Useful for history, tourism, music and globalisation topics.", "Museums help preserve cultural heritage.", "Global trends can threaten local cultural heritage.", "博物館有助於保存文化資產。", "全球化的潮流可能威脅在地的文化資產。"),
+      keyword("commercialisation", "commercialisation", "/kəˌmɜːʃəlaɪˈzeɪʃən/", "noun", "the process of managing something mainly for profit", "商業化", "以營利為主要考量來經營或管理某事物的過程", "Useful for advertising, culture and tourism topics.", "Commercialisation can reduce the authenticity of a festival.", "The commercialisation of sport has increased advertising revenue.", "商業化可能削弱節慶活動的原有風貌。", "運動賽事的商業化提升了廣告收益。"),
+      keyword("consumer-behaviour", "consumer behaviour", "/kənˌsjuːmə bɪˈheɪvjə/", "noun", "the way people choose and buy products", "消費者行為", "人們選擇與購買產品的方式", "Useful for advertising, shopping and global products.", "Advertising has a strong influence on consumer behaviour.", "Online reviews have changed consumer behaviour.", "廣告對消費者行為有很大的影響力。", "網路評論已經改變了消費者的行為模式。"),
+      keyword("social-norms", "social norms", "/ˌsəʊʃəl ˈnɔːmz/", "noun", "shared expectations about acceptable behaviour", "社會規範", "眾人對於合宜行為所共享的期待", "Useful for fashion, family choices and cultural change.", "Global media can reshape social norms.", "Social norms influence how people dress.", "全球媒體能重新塑造社會規範。", "社會規範會影響人們的穿著方式。"),
+    ],
+    generic: [
+      keyword("resource-allocation", "resource allocation", "/rɪˈzɔːs ˌæləˈkeɪʃən/", "noun", "the way money, time or materials are distributed", "資源分配", "金錢、時間或物資被分配運用的方式", "Useful for evaluating competing public priorities.", "Effective resource allocation can improve public services.", "The debate concerns resource allocation between roads and railways.", "有效的資源分配能改善公共服務。", "這場爭論的核心，在於道路與鐵路之間的資源分配。"),
+      keyword("long-term-implications", "long-term implications", "/ˌlɒŋ tɜːm ˌɪmplɪˈkeɪʃənz/", "noun", "effects that may appear or continue far into the future", "長期影響", "可能延續到未來、久遠才顯現出來的影響", "Useful for extending an argument beyond immediate results.", "The policy has important long-term implications.", "Governments should consider the long-term implications of inaction.", "這項政策帶有重要的長期影響。", "政府應考量不作為所帶來的長期影響。"),
+      keyword("equitable-access", "equitable access", "/ˈekwɪtəbəl ˈækses/", "noun", "fair opportunity for everyone to use a service", "公平使用（服務）的機會", "讓每個人都能公平地獲得使用某項服務的機會", "Useful for education, healthcare, water and transport topics.", "Public funding can provide equitable access to education.", "Rural communities need equitable access to healthcare.", "公共資金能確保人人都有公平接受教育的機會。", "鄉村社區需要有公平獲得醫療照護的機會。"),
+      keyword("public-expenditure", "public expenditure", "/ˌpʌblɪk ɪkˈspendɪtʃə/", "noun", "money spent by a government", "公共支出", "政府所花費的金錢", "Useful for questions about public priorities and taxation.", "Public expenditure should focus on essential services.", "The proposal would require substantial public expenditure.", "公共支出應優先用於基本服務。", "這項提案將需要大量的公共支出。"),
+    ],
+  };
+})();
