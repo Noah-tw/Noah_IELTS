@@ -28,9 +28,31 @@
       window.addEventListener('resize', setRealVH);
       window.addEventListener('orientationchange', function () { setTimeout(setRealVH, 50); });
       if (window.visualViewport) window.visualViewport.addEventListener('resize', setRealVH);
-      var standalone = window.navigator.standalone === true ||
+
+      window.isStandalonePWA = window.navigator.standalone === true ||
         (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
-      if (standalone) document.documentElement.classList.add('is-standalone');
+
+      // Ported from the WordArk build's proven fix: even once the layout numbers
+      // are correct (html.is-standalone .screen{height:100vh} in styles.css),
+      // WebKit can keep painting stale pixels on a standalone-PWA cold launch
+      // until something forces a real repaint. This briefly toggles the viewport
+      // meta tag's viewport-fit to force that.
+      window.forceViewportRecalc = function () {
+        var vp = document.querySelector('meta[name="viewport"]');
+        if (!vp) return;
+        var original = vp.getAttribute('content');
+        vp.setAttribute('content', original.replace('viewport-fit=cover', 'viewport-fit=auto'));
+        void document.documentElement.offsetHeight; // force sync reflow between the two steps
+        setTimeout(function () { vp.setAttribute('content', original); }, 60);
+      };
+
+      if (window.isStandalonePWA) {
+        document.documentElement.classList.add('is-standalone');
+        window.forceViewportRecalc();
+        document.addEventListener('visibilitychange', function () {
+          if (document.visibilityState === 'visible') { window.forceViewportRecalc(); }
+        });
+      }
     })();
   </script>
 </head>

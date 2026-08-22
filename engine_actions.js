@@ -93,6 +93,7 @@
     const settings = options && typeof options === "object" ? options : {};
     const renderUi = settings.quiet !== true;
     const onEnded = typeof settings.onEnded === "function" ? settings.onEnded : null;
+    const onStart = typeof settings.onStart === "function" ? settings.onStart : null;
     if (!G.tts || typeof G.tts.say !== "function") {
       G.state.notice = "Speech playback is not available in this browser.";
       if (renderUi) G.render();
@@ -109,6 +110,9 @@
       G.state.speechActive = false;
       if (renderUi) G.render();
       if (onEnded) onEnded();
+    }, function () {
+      if (token !== speechToken) return;
+      if (onStart) onStart();
     });
   }
 

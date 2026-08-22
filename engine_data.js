@@ -155,20 +155,51 @@
     });
   }
 
+  // Small deterministic string hash (djb2), used only to seed a per-question
+  // shuffle of a keyword pack — same question always gets the same shuffle,
+  // but different questions in the same topic category no longer collapse
+  // onto an identical set of words.
+  function stableHash(text) {
+    let hash = 5381;
+    const str = String(text || "");
+    for (let i = 0; i < str.length; i += 1) {
+      hash = ((hash << 5) + hash + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash);
+  }
+
+  function seededShuffle(list, seed) {
+    const items = list.slice();
+    let state = seed || 1;
+    for (let i = items.length - 1; i > 0; i -= 1) {
+      state = (state * 1103515245 + 12345) & 0x7fffffff;
+      const j = state % (i + 1);
+      const tmp = items[i];
+      items[i] = items[j];
+      items[j] = tmp;
+    }
+    return items;
+  }
+
   function keywordsForQuestion(question, category) {
     const formatPack = question.task === 1
       ? (category === "Maps & Plans" ? "task1Map" : category === "Processes" ? "task1Process" : "task1Data")
       : null;
     const topicPack = topicPackName(question);
+    const seed = stableHash(question.id);
     let keywords = [];
     if (formatPack) {
-      keywords = (writingKeywordPacks[formatPack] || []).slice(0, 3);
-      const topicKeyword = (writingKeywordPacks[topicPack] || writingKeywordPacks.generic || [])[0];
+      const shuffledFormat = seededShuffle(writingKeywordPacks[formatPack] || [], seed);
+      keywords = shuffledFormat.slice(0, 3);
+      const topicChoices = seededShuffle(writingKeywordPacks[topicPack] || writingKeywordPacks.generic || [], seed + 1);
+      const topicKeyword = topicChoices[0];
       if (topicKeyword && !keywords.some((item) => item.id === topicKeyword.id)) keywords.push(topicKeyword);
     } else {
-      keywords = (writingKeywordPacks[topicPack] || writingKeywordPacks.generic || []).slice(0, 4);
+      const shuffledTopic = seededShuffle(writingKeywordPacks[topicPack] || writingKeywordPacks.generic || [], seed);
+      keywords = shuffledTopic.slice(0, 4);
     }
-    for (const keyword of (writingKeywordPacks.generic || [])) {
+    const genericFill = seededShuffle(writingKeywordPacks.generic || [], seed + 2);
+    for (const keyword of genericFill) {
       if (keywords.length >= 4) break;
       if (!keywords.some((item) => item.id === keyword.id)) keywords.push(keyword);
     }
@@ -293,43 +324,55 @@
       add("prompt", /the same site today/i, "the same site today", "", ["the site in its current form", "the present-day site", "what the site looks like now"], "site-today");
       add("prompt", /a public library/i, "a public library", "", ["a municipal library", "a local public library", "a community library"], "public-library");
     } else {
-      add("prompt", /Some people think/i, "think", "Some people ", ["argue that", "believe", "take the view that"], "some-think");
-      add("prompt", /Some people believe/i, "believe", "Some people ", ["argue that", "take the view that", "maintain that"], "some-believe");
-      add("prompt", /Others believe/i, "believe", "Others ", ["argue that", "maintain that", "hold the view that"], "others-believe");
-      add("prompt", /Other people think/i, "think", "Other people ", ["believe", "take the view that", "maintain that"], "other-think");
-      add("prompt", /Some people say/i, "say", "Some people ", ["argue that", "maintain that", "contend that"], "some-say");
-      add("prompt", /Many governments think/i, "think", "Many governments ", ["believe", "take the view that", "maintain that"], "governments-think");
+      // --- Tier 0: question-specific phrases (checked first, so each ---
+      // --- question's own unique wording fills the 4 slots before any ---
+      // --- generic connector is ever reached).                         ---
+      add("prompt", /a legal requirement/i, "a legal requirement", "", ["legally compulsory", "mandatory under the law", "required by law"], "legal-requirement");
+      add("prompt", /the only way to/i, "the only way to", "", ["the sole method of", "the only means of", "the single most effective way to"], "only-way");
+      add("prompt", /the only reason for/i, "the only reason for", "", ["the sole reason for", "the single reason why", "the only motive for"], "only-reason");
+      add("prompt", /in order to/i, "in order to", "", ["so as to", "with the aim of", "for the purpose of"], "in-order-to");
+      add("prompt", /Some people claim that/i, "claim that", "Some people ", ["assert that", "contend that", "maintain that"], "claim-that");
+      add("prompt", /equally important/i, "equally important", "", ["just as important", "of equal importance", "no less important"], "equally-important");
+      add("prompt", /economic progress/i, "economic progress", "", ["economic development", "progress in economic terms", "growth in the economy"], "economic-progress");
+      add("prompt", /share as much information as possible/i, "share as much information as possible", "", ["disseminate information as widely as possible", "make information as widely available as possible", "circulate information as freely as possible"], "share-information");
+      add("prompt", /make their own choices/i, "make their own choices", "", ["exercise their own judgement", "make independent decisions", "decide matters for themselves"], "own-choices");
+      add("prompt", /matters that affect them/i, "matters that affect them", "", ["issues that concern them", "matters relevant to their own lives", "decisions that have a direct impact on them"], "affect-them");
+      add("prompt", /have to speak a foreign language/i, "have to speak a foreign language", "", ["are required to speak a foreign language", "must communicate in a foreign language", "need to use a foreign language on a daily basis"], "have-to-speak");
+      add("prompt", /too many choices/i, "too many choices", "", ["an excessive number of choices", "an overwhelming range of options", "far too many options"], "too-many-choices");
+      add("prompt", /in today.s world/i, (match) => match[0], "", ["in the present day", "in contemporary society", "in the current era"], "todays-world");
+      add("prompt", /the advances made in agriculture/i, "the advances made in agriculture", "", ["progress in agricultural methods", "advancements in farming techniques", "improvements in agricultural technology"], "agricultural-advances");
+      add("prompt", /go hungry/i, "go hungry", "", ["suffer from hunger", "lack sufficient food", "experience food shortages"], "go-hungry");
+      add("prompt", /accept a bad situation/i, "accept a bad situation", "", ["tolerate an unfavourable situation", "come to terms with a difficult circumstance", "put up with an unsatisfactory situation"], "accept-bad-situation");
+      add("prompt", /the loss of particular species of plants and animals/i, (match) => match[0], "", ["the extinction of certain plant and animal species", "the disappearance of specific species", "declining numbers of particular plants and animals"], "loss-of-species");
+      add("prompt", /bringing people of different cultures and ages together/i, (match) => match[0], "", ["uniting people from different cultural and age groups", "connecting individuals across cultures and generations", "drawing together people of diverse backgrounds and ages"], "bringing-people-together");
+      add("prompt", /to be self-employed/i, "to be self-employed", "", ["to work for themselves", "to run their own business", "to become their own employer"], "self-employed");
+      add("prompt", /owning a home/i, "owning a home", "", ["owning one's own property", "being a homeowner", "having home ownership"], "owning-a-home");
+      add("prompt", /read everything they want online without paying/i, (match) => match[0], "", ["access all the content they want online free of charge", "read whatever they wish on the internet at no cost", "obtain all their reading material online without any payment"], "read-online-without-paying");
+      add("prompt", /persuading us to buy things/i, "persuading us to buy things", "", ["convincing consumers to make purchases", "influencing people to buy products", "encouraging consumers to spend money"], "persuading-us-to-buy");
+      add("prompt", /no longer pay attention to it/i, "no longer pay attention to it", "", ["no longer take any notice of it", "have stopped paying it much attention", "tend to overlook it"], "no-longer-pay-attention");
+      add("prompt", /achieve anything if they try hard enough/i, (match) => match[0], "", ["accomplish anything through sufficient effort", "reach any goal provided they work hard enough", "succeed at anything as long as they try their best"], "achieve-anything");
+      add("prompt", /finding out about the history of the house or building they live in/i, (match) => match[0], "", ["discovering the history of their own home", "learning about the past of the property they live in", "researching the background of their house or building"], "finding-out-about-history");
+      add("prompt", /emphasise that their products are new in some way/i, (match) => match[0], "", ["stress the novelty of their products", "highlight that their products offer something new", "underline the innovative features of their products"], "emphasise-new");
+      add("prompt", /contain high levels of sugar/i, "contain high levels of sugar", "", ["have a high sugar content", "are heavily sweetened", "contain excessive amounts of sugar"], "high-levels-of-sugar");
+      add("prompt", /take risks/i, "take risks", "", ["take chances", "embrace risk", "accept an element of risk"], "take-risks");
+      add("prompt", /alternative medicines and treatments/i, "alternative medicines and treatments", "", ["non-conventional medicines and remedies", "complementary treatments", "unconventional forms of treatment"], "alternative-medicines");
+      add("prompt", /work in the country where they did their training/i, (match) => match[0], "", ["remain in the country in which they trained", "practise in their country of training", "stay and work where they originally trained"], "work-in-training-country");
+      add("prompt", /improve people.s lives/i, (match) => match[0], "", ["improve the quality of people's lives", "enhance human wellbeing", "make people's lives better"], "improve-peoples-lives");
+      add("prompt", /give all their time and attention to studying for a qualification/i, (match) => match[0], "", ["devote all their time to gaining a qualification", "focus exclusively on their qualification studies", "commit their full attention to a single course of study"], "give-time-to-qualification");
+      add("prompt", /moving to cities/i, "moving to cities", "", ["relocating to urban areas", "migrating to cities", "shifting to city life"], "moving-to-cities");
+      add("prompt", /living longer than ever before/i, "living longer than ever before", "", ["enjoying greater longevity than in the past", "surviving to a greater age than previous generations", "living to an older age than ever before"], "living-longer");
+      add("prompt", /cooperate more/i, "cooperate more", "", ["collaborate to a greater extent", "work together more closely", "place greater emphasis on cooperation"], "cooperate-more");
+      add("prompt", /save money for their future/i, "save money for their future", "", ["set money aside for the future", "put aside savings for later life", "build up financial savings for the future"], "save-money-for-future");
+      add("prompt", /food produced all over the world/i, "food produced all over the world", "", ["food sourced from every corner of the globe", "produce grown in countries across the world", "food imported from around the globe"], "food-produced-all-over-world");
+      add("prompt", /global fashion trends/i, "global fashion trends", "", ["international fashion movements", "worldwide fashion influences", "fashion trends from around the world"], "global-fashion-trends");
+      add("prompt", /spend hours every day on their smartphones/i, (match) => match[0], "", ["spend several hours a day using their smartphones", "devote a significant portion of each day to their smartphones", "spend a considerable amount of time on their smartphones daily"], "spend-hours-smartphones");
+      // --- Tier 1: existing question-specific phrases ---
       add("prompt", /it is necessary to/i, "necessary to", "it is ", ["essential to", "vital to", "crucial to"], "necessary");
       add("prompt", /should spend money on/i, "spend money on", "should ", ["allocate funds to", "invest in", "direct funding towards"], "spending");
       add("prompt", /should be required to/i, "required to", "should be ", ["obliged to", "expected to", "mandated to"], "required");
       add("prompt", /more and more people/i, "more and more people", "", ["a growing number of people", "an increasing proportion of people", "an ever-larger number of individuals"], "more-people");
       add("prompt", /a growing number of people/i, "a growing number of people", "", ["an increasing number of individuals", "more and more people", "an expanding share of the population"], "growing-number");
-      add("prompt", /is very important/i, "very important", "is ", ["of great importance", "highly significant", "crucial"], "very-important");
-      add("prompt", /is important/i, "important", "is ", ["essential", "of considerable importance", "significant"], "important");
-      add("prompt", /the most important/i, "most important", (match) => match[0].slice(0, 4), ["primary", "most significant", "foremost"], "most-important");
       add("prompt", /rather than/i, "rather than", "", ["instead of", "as opposed to", "in preference to"], "rather-than");
-      add("prompt", /positive or (?:a )?negative (?:development|situation)/i, (match) => match[0], "", ["a beneficial or harmful trend", "a favourable or unfavourable development", "a positive or adverse change"], "positive-negative");
-      add("prompt", /advantages and disadvantages/i, "advantages and disadvantages", "", ["benefits and drawbacks", "strengths and weaknesses", "merits and limitations"], "advantages-disadvantages");
-      add("prompt", /To what extent do you agree or disagree(?: with (?:this statement|this opinion))?/i, (match) => match[0], "", ["How far do you agree or disagree with this view", "What is your position on this issue", "To what degree do you support or oppose this view"], "extent");
-      add("prompt", /Do you agree or disagree/i, "Do you agree or disagree", "", ["Do you support or oppose this view", "What is your position on this issue", "Are you in favour of or against this argument"], "agree");
-      add("prompt", /Discuss both (?:these )?views/i, (match) => match[0], "", ["Examine both perspectives", "Consider both sides of the argument", "Evaluate each of these viewpoints"], "discuss");
-      add("prompt", /give your own opinion/i, "give your own opinion", "", ["state your own view", "present your position", "express your personal perspective"], "opinion");
-      add("prompt", /What are the reasons for this/i, "What are the reasons for this", "", ["What factors explain this", "Why has this happened", "What has caused this situation"], "reasons");
-      add("prompt", /What can be done about this problem/i, "What can be done about this problem", "", ["How can this problem be addressed", "What measures could solve this issue", "Which actions could tackle this problem"], "solutions");
-      add("prompt", /In many countries/i, "In many countries", "", ["Across numerous countries", "In a wide range of nations", "In countries around the world"], "many-countries");
-      add("prompt", /In some countries/i, "In some countries", "", ["In certain countries", "Within a number of nations", "In several parts of the world"], "some-countries");
-      add("prompt", /Nowadays/i, (match) => match[0], "", [
-        (match) => /^[A-Z]/.test(match[0]) ? "At present" : "at present",
-        (match) => /^[A-Z]/.test(match[0]) ? "In contemporary society" : "in contemporary society",
-        (match) => /^[A-Z]/.test(match[0]) ? "In the modern era" : "in the modern era",
-      ], "nowadays");
-      add("prompt", /governments/i, (match) => match[0], "", [
-        (match) => /^[A-Z]/.test(match[0]) ? "Authorities" : "authorities",
-        (match) => /^[A-Z]/.test(match[0]) ? "National administrations" : "national administrations",
-        (match) => /^[A-Z]/.test(match[0]) ? "Public authorities" : "public authorities",
-      ], "governments");
-      add("prompt", /children/i, "children", "", ["young people", "younger members of society", "the younger generation"], "children");
-      add("prompt", /people/i, "people", "", ["individuals", "members of the public", "members of society"], "people");
       add("prompt", /a relatively large number of young adults/i, "a relatively large number of young adults", "", ["a comparatively high proportion of young adults", "a sizeable young-adult population", "a relatively high share of young adults"], "young-adults");
       add("prompt", /the advantages? of ([^.?!]+?) outweigh the disadvantages?/i, (match) => match[0], "", [
         (match) => `the benefits of ${match[1]} exceed the drawbacks`,
@@ -347,6 +390,46 @@
       add("prompt", /long school holidays/i, "long school holidays", "", ["extended school breaks", "lengthy school vacations", "long periods away from school"], "school-holidays");
       add("prompt", /environmental benefits/i, "environmental benefits", "", ["advantages for the environment", "ecological gains", "positive environmental effects"], "environmental-benefits");
       add("prompt", /stop flying altogether/i, "stop flying altogether", "", ["avoid air travel completely", "give up flying entirely", "cease travelling by plane"], "stop-flying");
+      // --- Tier 2: opinion-verb openers (useful register variation, ---
+      // --- but recur across several questions, so lower priority).   ---
+      add("prompt", /Some people think/i, "think", "Some people ", ["argue that", "believe", "take the view that"], "some-think");
+      add("prompt", /Some people believe/i, "believe", "Some people ", ["argue that", "take the view that", "maintain that"], "some-believe");
+      add("prompt", /Others believe/i, "believe", "Others ", ["argue that", "maintain that", "hold the view that"], "others-believe");
+      add("prompt", /Other people think/i, "think", "Other people ", ["believe", "take the view that", "maintain that"], "other-think");
+      add("prompt", /Some people say/i, "say", "Some people ", ["argue that", "maintain that", "contend that"], "some-say");
+      add("prompt", /Many governments think/i, "think", "Many governments ", ["believe", "take the view that", "maintain that"], "governments-think");
+      // --- Tier 3: generic single/double-word connectors. These appear ---
+      // --- in dozens of prompts, so they are only used as a last-resort ---
+      // --- filler once every more specific pattern above has been tried. ---
+      add("prompt", /is very important/i, "very important", "is ", ["of great importance", "highly significant", "crucial"], "very-important");
+      add("prompt", /is important/i, "important", "is ", ["essential", "of considerable importance", "significant"], "important");
+      add("prompt", /the most important/i, "most important", (match) => match[0].slice(0, 4), ["primary", "most significant", "foremost"], "most-important");
+      add("prompt", /In many countries/i, "In many countries", "", ["Across numerous countries", "In a wide range of nations", "In countries around the world"], "many-countries");
+      add("prompt", /In some countries/i, "In some countries", "", ["In certain countries", "Within a number of nations", "In several parts of the world"], "some-countries");
+      add("prompt", /Nowadays/i, (match) => match[0], "", [
+        (match) => /^[A-Z]/.test(match[0]) ? "At present" : "at present",
+        (match) => /^[A-Z]/.test(match[0]) ? "In contemporary society" : "in contemporary society",
+        (match) => /^[A-Z]/.test(match[0]) ? "In the modern era" : "in the modern era",
+      ], "nowadays");
+      add("prompt", /governments/i, (match) => match[0], "", [
+        (match) => /^[A-Z]/.test(match[0]) ? "Authorities" : "authorities",
+        (match) => /^[A-Z]/.test(match[0]) ? "National administrations" : "national administrations",
+        (match) => /^[A-Z]/.test(match[0]) ? "Public authorities" : "public authorities",
+      ], "governments");
+      add("prompt", /children/i, "children", "", ["young people", "younger members of society", "the younger generation"], "children");
+      add("prompt", /people/i, "people", "", ["individuals", "members of the public", "members of society"], "people");
+      // Note: generic IELTS task-type navigation phrases are intentionally
+      // NEVER turned into paraphrase points, even though they sit inside
+      // question.prompt for some question types — e.g. "To what extent do
+      // you agree or disagree", "Do you agree or disagree", "Discuss both
+      // these views", "give your own opinion", "positive or negative
+      // development/situation", "advantages and disadvantages" (as a bare
+      // task-type label), "What are the reasons for this", "What can be
+      // done about this problem". These are the same handful of Cambridge
+      // task-type templates repeated near-verbatim across dozens of
+      // questions, so they carry no question-specific paraphrase value —
+      // the same category as the timing/word-count boilerplate that was
+      // already excluded.
     }
     return points;
   }
@@ -447,7 +530,7 @@
     && audit.part3Sets === 44
     && audit.writingTask1 === 40
     && audit.writingTask2 === 40
-    && audit.writingKeywordNoteTemplates === 52
+    && audit.writingKeywordNoteTemplates === 89
     && audit.writingKeywordNotesValid
     && audit.writingKeywordExamplesValid
     && audit.writingParaphraseVariantsValid

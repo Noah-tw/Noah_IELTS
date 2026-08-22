@@ -72,6 +72,15 @@
 
     G.actions.bind();
     G.render();
+
+    // FIX (same landing-screen gap as the WordArk build): the very first
+    // forceViewportRecalc() call in index.html runs before #app has any
+    // content, so it can't repaint anything. #scr-landing (just built by the
+    // G.render() call above) is the first real content to exist - recalc once
+    // more now that something is actually on screen to repaint.
+    if (window.isStandalonePWA && window.forceViewportRecalc) {
+      requestAnimationFrame(window.forceViewportRecalc);
+    }
   };
 
   if (document.readyState === "loading") {

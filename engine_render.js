@@ -283,10 +283,7 @@
           <div class="speaking-part-options writing-task-options">
             ${tasks.map((task) => {
               const details = taskDetails[task];
-              return `<button class="mode-btn speaking-part-option writing-task-option writing-task-option-${task}" data-action="start-writing-mode" data-mode="${task}">
-                <span class="writing-task-option-icon" aria-hidden="true">${details[2]}</span>
-                <span class="writing-task-option-copy"><strong>${details[0]}</strong><small>${details[1]} · ${writingTaskPoolCount(task)}</small></span>
-              </button>`;
+              return `<button class="mode-btn speaking-part-option writing-task-option-${task}" data-action="start-writing-mode" data-mode="${task}"><strong>${details[0]}</strong><small>${details[1]} · ${writingTaskPoolCount(task)}</small></button>`;
             }).join("")}
           </div>
         </div>

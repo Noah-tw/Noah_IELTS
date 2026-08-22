@@ -111,7 +111,7 @@
     return unlockPromise;
   }
 
-  function speakNative(text, lang, rate, token, complete) {
+  function speakNative(text, lang, rate, token, complete, onStart) {
     if (!window.speechSynthesis || typeof SpeechSynthesisUtterance === "undefined") {
       complete();
       return;
@@ -130,6 +130,7 @@
         if (token !== playToken) return;
         started = true;
         clearTimeout(speechTimer);
+        if (typeof onStart === "function") onStart();
       };
       utterance.onend = function () {
         if (token !== playToken) return;
@@ -170,7 +171,7 @@
     chooseVoice();
   }
 
-  function say(text, requestedLang, rate, patient, onEnded) {
+  function say(text, requestedLang, rate, patient, onEnded, onStart) {
     const sourceText = String(text || "").trim();
     if (!sourceText) {
       if (typeof onEnded === "function") onEnded();
@@ -191,7 +192,7 @@
     if (unlockPromise) {
       const queuedToken = playToken;
       unlockPromise.finally(function () {
-        if (queuedToken === playToken) say(sourceText, lang, playbackRate, waitForGoogle, onEnded);
+        if (queuedToken === playToken) say(sourceText, lang, playbackRate, waitForGoogle, onEnded, onStart);
       });
       return;
     }
@@ -240,10 +241,22 @@
     G.tts._lastSource = null;
     G.tts._lastFailure = null;
 
+    // Fires the moment audio is genuinely audible (real playback, not just a
+    // request being attempted), whichever source ends up succeeding. Callers
+    // use this to know it is now unsafe to interrupt without cutting sound
+    // off mid-word — only the true "started" signal should extend any of
+    // their own pacing timers, never a fixed guess at network latency.
+    let started = false;
+    function fireStart() {
+      if (started || token !== playToken) return;
+      started = true;
+      if (typeof onStart === "function") onStart();
+    }
+
     function tryNextSource() {
       if (token !== playToken) return;
       if (sourceIndex >= sources.length) {
-        speakNative(sourceText, lang, playbackRate, token, complete);
+        speakNative(sourceText, lang, playbackRate, token, complete, fireStart);
         return;
       }
       const source = sources[sourceIndex];
@@ -264,7 +277,7 @@
         G.tts._lastFailure = { source: source.id, reason, name: error && error.name ? error.name : "" };
         if (reason === "not-allowed") {
           mediaUnlocked = false;
-          speakNative(sourceText, lang, playbackRate, token, complete);
+          speakNative(sourceText, lang, playbackRate, token, complete, fireStart);
           return;
         }
         sourceIndex += 1;
@@ -276,6 +289,7 @@
         mediaUnlocked = true;
         G.tts._lastSource = source.id;
         lastGoodSource.set(requestKey, { id: source.id, at: Date.now() });
+        fireStart();
       };
       element.onended = function () {
         if (token !== playToken) return;

@@ -474,6 +474,7 @@
     const keyword = keywords[nextIndex];
     if (!keyword || !G.actions) return;
     let continued = false;
+    let started = false;
     function continueSequence() {
       if (continued || token !== writingKeywordSequenceToken) return;
       continued = true;
@@ -486,13 +487,37 @@
       writingKeywordTimer = setTimeout(function () { revealNextWritingKeyword(token); }, 240);
     }
 
-    // Normally the next word waits for pronunciation. This fallback keeps the
-    // rhythm moving if a browser never reports that speech ended.
-    writingKeywordTimer = setTimeout(continueSequence, 1800);
+    // Two different fallbacks, because "no source has even started playing
+    // yet" and "audio is genuinely mid-word" call for different rhythm.
+    // Before real playback begins, G.tts.say()'s own source cascade (3
+    // dictionary lookups + Google primary + Google backup, each with its own
+    // timeout, patient:false) can legitimately take up to ~4.5s before it
+    // even reaches the native-voice fallback, and native voice adds up to
+    // another ~3.6s worst case before it's provably stuck. 8500ms sits above
+    // that whole bound, so this pre-start timer only ever fires for a truly
+    // broken browser - never as a race against a cascade that's still
+    // legitimately in progress (a shorter value here was the actual cause of
+    // the reported bug: the timer fired while a source had *just* started
+    // playing, and the resulting "move to next word" call stopped that
+    // still-playing audio mid-word).
+    writingKeywordTimer = setTimeout(function () {
+      if (!started) continueSequence();
+    }, 8500);
     G.actions.speak(keyword.term, {
       quiet: true,
       patient: false,
       rate: 0.84,
+      onStart: function () {
+        // continued guards against a late-arriving onStart for a word we
+        // already gave up on and moved past (see the "never started"
+        // fallback above) - without it, this could reset the *next* word's
+        // shared writingKeywordTimer and reintroduce the same cut-off bug
+        // one word later.
+        if (started || continued || token !== writingKeywordSequenceToken) return;
+        started = true;
+        clearTimeout(writingKeywordTimer);
+        writingKeywordTimer = setTimeout(continueSequence, 4000);
+      },
       onEnded: continueSequence,
     });
   }
