@@ -839,7 +839,7 @@ Discussion topic: Children and reading
 - What are the benefits of parents reading books to their children?
 - Should parents always let children choose the books they read?
 Discussion topic: Electronic books
-- How popular are electronic books are in your country?
+- How popular are electronic books in your country?
 - What are the advantages of parents reading electronic books (compared to printed books)?
 - Will electronic books ever completely replace printed books in the future?
 
@@ -1108,4 +1108,3 @@ C20-Task4
 - Why are discussion programmes involving members of the public popular on [TV and radio]?
 - What kinds of people want to take part in discussion programmes?
 - Do discussion programmes influence people in a good or bad way?
-

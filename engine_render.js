@@ -10,6 +10,12 @@
     unfamiliar: "🔁 Practice",
     mastered: "🏆 Mastered",
   };
+  const writingPoolLabels = {
+    all: "All questions",
+    new: "New",
+    unfamiliar: "Practice",
+    mastered: "Mastered",
+  };
   const speakingPartDetails = {
     1: ["Part 1", "Interview"],
     2: ["Part 2", "Long Turn"],
@@ -64,9 +70,15 @@
     return pools[String(task)] || null;
   }
 
+  function writingTypeFilter(task) {
+    const filters = G.state.writingTypeFilters;
+    if (!filters || typeof filters !== "object" || Array.isArray(filters)) return "all";
+    return String(filters[String(task)] || "all");
+  }
+
   function writingTaskPoolCount(task) {
     const pool = writingTaskPool(task);
-    return pool ? G.utils.writingPool(String(task), pool, G.state.writingCategory).length : 0;
+    return pool ? G.utils.writingPool(String(task), pool, G.state.writingTypeFilters).length : 0;
   }
 
   function writingTaskAvailable(task) {
@@ -78,7 +90,7 @@
   }
 
   function writingCategories(task) {
-    return Array.from(new Set(G.DATA.writingSets.filter((set) => set.task === Number(task)).map((set) => set.category))).sort();
+    return Array.from(new Set(G.DATA.writingSets.filter((set) => set.task === Number(task)).map((set) => set.category)));
   }
 
   function renderSpeakingPoolSummary() {
@@ -94,21 +106,16 @@
   }
 
   function renderWritingFilters() {
-    const labels = [1, 2].map((task) => {
+    const rows = [1, 2].map((task) => {
       const pool = writingTaskPool(task);
-      const label = pool ? speakingPoolLabels[pool].replace(/^\S+\s/, "") : "None";
-      return `T${task} ${label}`;
-    });
-    const categoryValue = String(G.state.writingCategory || "all");
-    const categoryLabel = categoryValue === "all"
-      ? "All categories"
-      : `T${categoryValue.slice(0, categoryValue.indexOf(":"))} · ${categoryValue.slice(categoryValue.indexOf(":") + 1)}`;
+      const poolLabel = pool ? writingPoolLabels[pool] : "Off";
+      const type = writingTypeFilter(task);
+      const typeLabel = type === "all" ? "All types" : type;
+      return `<span class="writing-filter-row"><strong>Task ${task}</strong><small>${esc(poolLabel)} · ${esc(typeLabel)}</small></span>`;
+    }).join("");
     return `<button class="btn-filter active writing-practice-filter" data-action="open-writing-setup" aria-label="Edit Writing practice selection">
       <span class="writing-filter-icon" aria-hidden="true">📂</span>
-      <span class="writing-filter-copy">
-        <strong>${labels.join(" · ")}</strong>
-        <small>${esc(categoryLabel)}</small>
-      </span>
+      <span class="writing-filter-copy">${rows}</span>
       <span class="btn-filter-arrow">▾</span>
     </button>`;
   }
@@ -493,9 +500,7 @@
         <div class="intro-sent-nav speaking-hint-nav">
           <span class="speaking-hint-label">💡 Quick notes</span>
           ${item.hints.length > 1 ? `
-            <span class="intro-sent-dots" aria-label="Hint ${index + 1} of ${item.hints.length}">
-              ${item.hints.map((_hint, hintIndex) => `<span class="intro-sent-dot ${hintIndex === index ? "on" : ""}"></span>`).join("")}
-            </span>
+            <span class="speaking-hint-counter" aria-label="Hint ${index + 1} of ${item.hints.length}">${index + 1} / ${item.hints.length}</span>
             <button class="intro-sent-next" data-action="next-speaking-hint" aria-label="Show another hint">Next</button>` : ""}
         </div>
         <div class="speaking-hint-lines" aria-live="polite">
@@ -519,12 +524,13 @@
           <button class="wc-tts" data-action="speak-current" aria-label="Read question aloud">${G.state.speechActive ? "■" : "🔊"}</button>
         </div>
         <h1 class="speaking-question">${esc(item.text)}</h1>
-        ${hint || (item.part === 2 ? `
+        ${item.part === 2 ? `
           <div class="cue-box cue-box-large">
             <span>You should say:</span>
             <ul>${item.bullets.map((bullet) => `<li>${esc(bullet)}</li>`).join("")}</ul>
             <p>${esc(item.closing)}</p>
-          </div>` : "")}
+          </div>` : ""}
+        ${hint}
       </article>
       ${G.state.notice ? `<div class="notice-card">${esc(G.state.notice)}</div>` : ""}`;
   }
@@ -584,7 +590,9 @@
   }
 
   function writingColorClass(tone) {
-    return ["green", "blue", "purple", "orange"].includes(tone)
+    // Six-colour cycle; colour count is intentionally independent from the
+    // number of paraphrase points.
+    return ["green", "blue", "purple", "orange", "water", "amber"].includes(tone)
       ? `writing-color-${tone}`
       : "writing-color-blue";
   }
@@ -628,12 +636,13 @@
     const visibleCount = Math.max(0, Math.min(keywords.length, Number(G.state.writingKeywordVisibleCount) || 0));
     const newestIndex = Number(G.state.writingKeywordNewestIndex);
     const complete = Boolean(G.state.writingKeywordSequenceComplete) || visibleCount >= keywords.length;
+    const progressPercent = keywords.length ? Math.round((visibleCount / keywords.length) * 100) : 100;
     return `
-      <section class="writing-flow-screen" aria-label="Additional keywords list">
+      <section class="writing-flow-screen" aria-label="Question-specific keywords list">
         <article class="intro-card keyword-card keyword-list-card">
-          <div class="intro-badge">Additional Keywords</div>
+          <div class="intro-badge">Question-specific Keywords</div>
           <div class="keyword-list-heading">
-            <span class="keyword-list-heading-title">Useful topic language</span>
+            <span class="keyword-list-heading-title">Useful language for this exact question</span>
             <span>One word at a time — listen, then replay</span>
           </div>
           <div class="keyword-list" aria-live="polite">
@@ -653,11 +662,15 @@
               </div>`).join("")}
           </div>
           <div class="keyword-sequence-progress" aria-label="${visibleCount} of ${keywords.length} keywords">
-            <span class="keyword-sequence-dots">${keywords.map((_keyword, index) => `<i class="${index < visibleCount ? "on" : ""}${index === newestIndex ? " newest" : ""}"></i>`).join("")}</span>
-            <span>${complete ? "Ready for the cards ✓" : `${visibleCount}/${keywords.length} · listening…`}</span>
+            <span class="keyword-sequence-track" aria-hidden="true"><i style="width:${progressPercent}%"></i></span>
+            <span>${visibleCount}/${keywords.length} · ${complete ? "Ready for the cards ✓" : "listening…"}</span>
           </div>
         </article>
-        <button class="btn-intro-go writing-flow-next" data-action="advance-writing-flow" ${complete ? "" : "disabled"}>${complete ? "Open Keyword Cards →" : "Listen to each word…"}</button>
+        <div class="writing-flow-actions">
+          <button class="btn-intro-go writing-flow-next" data-action="advance-writing-flow" ${complete ? "" : "disabled"}>${complete ? "Open Keyword Cards →" : "Listen to each word…"}</button>
+          ${complete ? "" : `<button type="button" class="btn-ghost writing-flow-skip" data-action="skip-writing-keyword-list">Show all words now →</button>`}
+          <button type="button" class="btn-ghost writing-flow-skip" data-action="skip-writing-keywords">Skip Keywords → Paraphrase</button>
+        </div>
       </section>`;
   }
 
@@ -714,7 +727,10 @@
           </div>
           ${keyword.note ? `<div class="intro-tip keyword-tip">💬 <bdi dir="ltr">${esc(keyword.note)}</bdi></div>` : ""}
         </article>
-        <button class="btn-intro-go writing-flow-next" data-action="advance-writing-flow">${lastKeyword ? "Start paraphrase →" : "Next keyword →"}</button>
+        <div class="writing-flow-actions">
+          <button class="btn-intro-go writing-flow-next" data-action="advance-writing-flow">${lastKeyword ? "Start paraphrase →" : "Next keyword →"}</button>
+          ${lastKeyword ? "" : `<button type="button" class="btn-ghost writing-flow-skip" data-action="skip-writing-keywords">Skip remaining Keywords →</button>`}
+        </div>
       </section>`;
   }
 
@@ -762,13 +778,19 @@
 
   function renderComplete(module) {
     const isSpeaking = module === "speaking";
+    const writingTotalPoints = Array.isArray(G.state.writingSessionSets)
+      ? G.state.writingSessionSets.reduce((sum, set) => sum + (Array.isArray(set && set.points) ? set.points.length : 0), 0)
+      : 0;
+    const writingCompletedAll = writingTotalPoints > 0 && G.state.writingDone === writingTotalPoints;
     return `
       <div class="cc">
         <div class="cc-emo">${isSpeaking ? "🎙️" : "✍️"}</div>
         <div class="cc-title">Practice complete</div>
         <div class="cc-score">${isSpeaking
           ? "Your speaking progress was saved on this device."
-          : "You studied the question, keywords and every paraphrase."}</div>
+          : writingCompletedAll
+            ? `You completed all ${writingTotalPoints} paraphrase points.`
+            : `You completed ${G.state.writingDone} of ${writingTotalPoints} paraphrase points. Skipped points remain in Practice.`}</div>
         <div class="cc-stats">
           ${isSpeaking ? `
             <div class="ccs"><span class="ccs-v">${G.state.speakingDone}</span><span class="ccs-l">Done</span></div>
@@ -847,7 +869,7 @@
     const writingPhaseLabel = G.state.writingPhase === "question"
       ? "Question Card"
       : G.state.writingPhase === "keyword-list"
-        ? "Additional Keywords"
+        ? "Question-specific Keywords"
         : G.state.writingPhase === "keyword-card"
           ? `Keyword Card ${G.state.writingKeywordIndex + 1}/${(G.modes.currentWritingSet() && G.modes.currentWritingSet().keywords.length) || 0}`
           : "Paraphrase";
@@ -978,97 +1000,79 @@
   }
 
   function renderWritingPoolOverlay() {
+    const setupTask = ["1", "2"].includes(String(G.state.writingSetupTask))
+      ? Number(G.state.writingSetupTask)
+      : 1;
     const options = [
       ["all", "All"],
       ["new", "New"],
       ["unfamiliar", "Practice"],
       ["mastered", "Mastered"],
-      ["none", "Off"],
     ];
-    const rows = [1, 2].map((task) => {
-      const assignedPool = writingTaskPool(task);
-      const buttons = options.map(([pool, label]) => {
-        const count = pool === "none" ? null : G.utils.writingPool(String(task), pool, G.state.writingCategory).length;
-        const selected = pool === "none" ? !assignedPool : assignedPool === pool;
-        const disabled = pool !== "none" && count === 0 && !selected;
-        return `<button class="speaking-pool-option writing-pool-option writing-pool-option-${pool}${selected ? " on" : ""}" data-action="set-writing-task-pool" data-task="${task}" data-pool="${pool}"
-            role="radio" aria-label="Task ${task}: ${label}${count === null ? "" : `, ${count} available`}" aria-checked="${selected}" ${disabled ? "disabled" : ""}>
-          <span class="speaking-pool-option-label">${selected ? `<span class="speaking-pool-state-mark" aria-hidden="true">✓</span>` : ""}${label}</span>
-          ${count === null ? "" : `<small>${count.toLocaleString()}</small>`}
-        </button>`;
-      }).join("");
-      return `<div class="speaking-pool-row writing-pool-row" role="radiogroup" aria-label="Pool for Task ${task}">
-        <strong class="speaking-pool-part-label">Task ${task}</strong>
-        ${buttons}
-      </div>`;
+    const assignedPool = writingTaskPool(setupTask) || "all";
+    const selectedType = writingTypeFilter(setupTask);
+    const selectedPoolLabel = writingPoolLabels[assignedPool] || "All";
+    const selectedTypeLabel = selectedType === "all" ? `All Task ${setupTask} types` : selectedType;
+    const poolButtons = options.map(([pool, label]) => {
+      const count = G.utils.writingPool(String(setupTask), pool, G.state.writingTypeFilters).length;
+      const selected = assignedPool === pool;
+      const disabled = count === 0 && !selected;
+      return `<button class="speaking-pool-option writing-pool-option writing-pool-option-${pool}${selected ? " on" : ""}" data-action="set-writing-task-pool" data-task="${setupTask}" data-pool="${pool}"
+          role="radio" aria-label="Task ${setupTask}: ${label}, ${count} available" aria-checked="${selected}" ${disabled ? "disabled" : ""}>
+        <span class="speaking-pool-option-label">${selected ? `<span class="speaking-pool-state-mark" aria-hidden="true">✓</span>` : ""}${label}</span>
+        <small>${count.toLocaleString()}</small>
+      </button>`;
     }).join("");
-    const selectedCategory = String(G.state.writingCategory || "all");
-    const categoryGroups = [1, 2].map((task) => `
-      <div class="writing-category-group-label"><span class="ielts-category-task">T${task}</span> Task ${task}</div>
-      ${writingCategories(task).map((category) => {
-        const value = `${task}:${category}`;
-        const count = G.DATA.writingSets.filter((set) => set.task === task && set.category === category).length;
-        return `<button class="cat-item tint-all${selectedCategory === value ? " on" : ""}" data-action="choose-writing-category" data-category="${esc(value)}">
-          <span class="cat-item-icon"><span class="ielts-category-task">T${task}</span></span>
-          <span class="cat-item-name">${esc(category)}</span>
-          <span class="cat-item-count">${count} questions</span>
-        </button>`;
-      }).join("")}`).join("");
+    const typeCount = (category) => {
+      const filters = Object.assign({}, G.state.writingTypeFilters || {}, { [String(setupTask)]: category });
+      return G.utils.writingPool(String(setupTask), assignedPool, filters).length;
+    };
+    const typeButtons = writingCategories(setupTask).map((category) => {
+      const count = typeCount(category);
+      const selected = selectedType === category;
+      const disabled = count === 0 && !selected;
+      return `<button class="cat-item tint-all${selected ? " on" : ""}${disabled ? " cat-empty-item" : ""}" data-action="choose-writing-category" data-task="${setupTask}" data-category="${esc(category)}" aria-pressed="${selected}" ${disabled ? "disabled" : ""}>
+        <span class="cat-item-name">${esc(category)}</span>
+        <span class="cat-item-count">${count} available</span>
+      </button>`;
+    }).join("");
+    const taskTabs = [1, 2].map((task) => {
+      const active = task === setupTask;
+      const taskKind = task === 1 ? "Visual report" : "Essay";
+      const taskPool = writingTaskPool(task) || "all";
+      const taskStatus = writingPoolLabels[taskPool] || "All";
+      return `<button class="writing-setup-tab${active ? " on" : ""}" data-action="set-writing-setup-task" data-task="${task}" role="tab" aria-selected="${active}">
+        <strong>Task ${task}</strong><small>${taskKind} · ${esc(taskStatus)}</small>
+      </button>`;
+    }).join("");
+    const selectedCount = G.utils.writingPool(String(setupTask), assignedPool, G.state.writingTypeFilters).length;
     return `
       <div class="ov on" data-overlay-backdrop>
         <div class="sheet speaking-pool-sheet writing-pool-sheet writing-setup-sheet">
           <div class="sh-handle"></div>
-          <div class="sh-title">Writing Practice</div>
-          <div class="writing-setup-label">Question pools</div>
-          <div class="speaking-pool-matrix">${rows}</div>
+          <div class="sh-title">Writing practice setup</div>
+          <p class="writing-setup-intro">Set Task 1 and Task 2 separately. Switching tabs will not erase the other Task.</p>
+          <div class="writing-setup-tabs" role="tablist" aria-label="Choose Writing Task">${taskTabs}</div>
+          <section class="writing-setup-panel" aria-label="Task ${setupTask} practice settings">
+          <div class="writing-setup-current" aria-live="polite">
+            <span><strong>Task ${setupTask}</strong>${esc(selectedPoolLabel)} · ${esc(selectedTypeLabel)}</span>
+            <b>${selectedCount} question${selectedCount === 1 ? "" : "s"}</b>
+          </div>
+          <div class="writing-setup-label"><span>1</span> Learning status</div>
+          <p class="writing-setup-help">Choose questions by your current progress.</p>
+          <div class="writing-status-options" role="radiogroup" aria-label="Question status for Task ${setupTask}">${poolButtons}</div>
           <div class="writing-setup-divider"></div>
-          <div class="writing-setup-label">Category focus</div>
-          <p class="writing-setup-help">Choose All, or focus one category in either Task.</p>
+          <div class="writing-setup-label"><span>2</span> Question type</div>
+          <p class="writing-setup-help">Then narrow Task ${setupTask} by question format, or keep all types.</p>
           <div class="cat-list writing-category-list writing-setup-category-list">
-            <button class="cat-item cat-all tint-all${selectedCategory === "all" ? " on" : ""}" data-action="choose-writing-category" data-category="all">
-              <span class="cat-item-icon"><span class="ielts-category-all">ALL</span></span>
-              <span class="cat-item-name">All categories</span>
-              <span class="cat-item-count">${G.DATA.writingSets.length} questions</span>
+            <button class="cat-item cat-all tint-all${selectedType === "all" ? " on" : ""}" data-action="choose-writing-category" data-task="${setupTask}" data-category="all" aria-pressed="${selectedType === "all"}">
+              <span class="cat-item-name">All Task ${setupTask} types</span>
+              <span class="cat-item-count">${typeCount("all")} available</span>
             </button>
-            ${categoryGroups}
+            ${typeButtons}
           </div>
+          </section>
           <button class="btn-close" data-action="close-overlay">Done</button>
-        </div>
-      </div>`;
-  }
-
-  function renderWritingCategoryOverlay() {
-    const selected = String(G.state.writingCategory || "all");
-    const allCount = G.DATA.writingSets.length;
-    const groups = [1, 2].map((task) => `
-      <div class="writing-category-group-label"><span class="ielts-category-task">T${task}</span> Task ${task}</div>
-      ${writingCategories(task).map((category) => {
-        const value = `${task}:${category}`;
-        const count = G.DATA.writingSets.filter((set) => set.task === task && set.category === category).length;
-        return `<button class="cat-item tint-all${selected === value ? " on" : ""}" data-action="choose-writing-category" data-category="${esc(value)}">
-          <span class="cat-item-icon"><span class="ielts-category-task">T${task}</span></span>
-          <span class="cat-item-name">${esc(category)}</span>
-          <span class="cat-item-count">${count} questions</span>
-        </button>`;
-      }).join("")}`).join("");
-    return `
-      <div class="ov on" data-overlay-backdrop>
-        <div class="cat-sheet-outer">
-          <div class="cat-sheet-top review-category-top">
-            <div class="sh-handle"></div>
-            <span class="fs-section-label">Writing category — tap to focus</span>
-          </div>
-          <div class="cat-scroll">
-            <div class="cat-list writing-category-list">
-              <button class="cat-item cat-all tint-all${selected === "all" ? " on" : ""}" data-action="choose-writing-category" data-category="all">
-                <span class="cat-item-icon"><span class="ielts-category-all">ALL</span></span>
-                <span class="cat-item-name">All categories</span>
-                <span class="cat-item-count">${allCount} questions</span>
-              </button>
-              ${groups}
-            </div>
-          </div>
-          <div class="cat-sheet-bottom"><button class="btn-close" data-action="close-overlay">Done</button></div>
         </div>
       </div>`;
   }
@@ -1144,7 +1148,7 @@
     if (G.state.overlay === "speaking-pools") return renderSpeakingPoolOverlay();
     if (G.state.overlay === "writing-setup") return renderWritingPoolOverlay();
     if (G.state.overlay === "writing-pools") return renderWritingPoolOverlay();
-    if (G.state.overlay === "writing-categories") return renderWritingCategoryOverlay();
+    if (G.state.overlay === "writing-categories") return renderWritingPoolOverlay();
     if (G.state.overlay === "modes") return renderModesOverlay();
     if (G.state.overlay === "modules") return renderModulesOverlay();
     if (G.state.overlay === "settings") return renderSettingsOverlay();

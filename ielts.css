@@ -15,6 +15,17 @@
   --teal: #16C2D6;
   --teal-dk: #0E93A3;
   --teal-lt: #D6F7FA;
+
+  /* Water blue and yellowish orange extend the Writing colour cycle beyond
+     the original four tones. V21 no longer ties content count to palette
+     size; these six colours repeat cyclically when a prompt has more points. */
+  --water: #1E9BFF;
+  --water-dk: #0A6FCC;
+  --water-lt: #DCEFFF;
+
+  --amber: #FFA518;
+  --amber-dk: #CC7E00;
+  --amber-lt: #FFEFD1;
 }
 
 .ielts-module-grid {
@@ -75,13 +86,13 @@
 }
 
 .ielts-module-icon.speaking-icon {
-  border-color: #075E83;
-  background: #0B7DAF;
+  border-color: #0B7DAF;
+  background: var(--blue);
 }
 
 .ielts-module-icon.writing-icon {
-  border-color: #6B21A8;
-  background: #9069CD;
+  border-color: #7E22CE;
+  background: var(--purple);
 }
 
 .ielts-icon {
@@ -196,18 +207,35 @@
 /* Speaking Part 1/2/3 and Writing Task 1/2 share one "candy button" treatment
    - solid saturated fill + darker bottom border/shadow - matching the same
    pattern already proven in the Pool overlay's speaking/writing-pool-option
-   chips (all=purple, new=blue, mastered=green). Previously Part 1 was a pale
-   tint (light bg + dark text) while Part 2/3 were solid, and Writing Task 1's
-   "blue" was a duller navy (#0B7DAF fill) than Speaking's actual --blue -
-   two different inconsistencies this unifies. */
+   chips. Aug 2026: Speaking Part 1/2/3 recolored to blue/purple (Noah
+   disliked the old green-blue-purple combo). Part 3 was tried as the
+   Keyword Card's red/coral first, but Noah found that red too strong/
+   uncomfortable, so it now reuses the app's existing --pink token instead
+   (already established elsewhere for Writing paraphrase, previously judged
+   comfortable) - warm without being alarming. Writing Task 1/2 keep their
+   separate, unchanged blue/purple mapping - no longer sharing a selector
+   with Speaking Part 2/3 since the two diverge in Part 3. */
 .speaking-part-option-1 {
-  border-color: var(--green-dk);
+  border-color: #0B7DAF;
   color: #FFFFFF;
-  background: var(--green);
-  box-shadow: 0 3px 0 var(--green-dk);
+  background: var(--blue);
+  box-shadow: 0 3px 0 #0B7DAF;
 }
 
-.speaking-part-option-2,
+.speaking-part-option-2 {
+  border-color: #7E22CE;
+  color: #FFFFFF;
+  background: var(--purple);
+  box-shadow: 0 3px 0 #7E22CE;
+}
+
+.speaking-part-option-3 {
+  border-color: var(--pink-dk);
+  color: #FFFFFF;
+  background: var(--pink);
+  box-shadow: 0 3px 0 var(--pink-dk);
+}
+
 .writing-task-option-1 {
   border-color: #0B7DAF;
   color: #FFFFFF;
@@ -215,7 +243,6 @@
   box-shadow: 0 3px 0 #0B7DAF;
 }
 
-.speaking-part-option-3,
 .writing-task-option-2 {
   border-color: #7E22CE;
   color: #FFFFFF;
@@ -242,8 +269,8 @@
 
 .writing-practice-filter {
   width: 100%;
-  min-height: 48px;
-  padding: 6px 13px;
+  min-height: 64px;
+  padding: 7px 13px;
   border-color: var(--purple);
   background: linear-gradient(90deg, var(--blue-lt), var(--purple-lt));
 }
@@ -258,23 +285,31 @@
   min-width: 0;
   flex: 1;
   flex-direction: column;
-  gap: 1px;
+  gap: 3px;
   text-align: left;
 }
 
-.writing-filter-copy strong {
+.writing-filter-row {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 6px;
+}
+
+.writing-filter-row strong {
   overflow: hidden;
   color: var(--ink);
-  font-size: .76rem;
+  font-size: .72rem;
   font-weight: 900;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.writing-filter-copy small {
+.writing-filter-row small {
   overflow: hidden;
   color: var(--ink3);
-  font-size: .65rem;
+  font-size: .68rem;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -475,6 +510,9 @@
 }
 
 .writing-setup-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   margin: 1px 0 8px;
   color: var(--ink);
   font-family: 'Rubik', sans-serif;
@@ -482,9 +520,132 @@
   font-weight: 700;
 }
 
+.writing-setup-label > span {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #FFFFFF;
+  background: var(--purple);
+  font-size: .7rem;
+  font-weight: 900;
+}
+
+.writing-setup-intro {
+  margin: -7px 0 13px;
+  color: var(--ink3);
+  font-size: .75rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.writing-setup-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 17px;
+}
+
+.writing-setup-tab {
+  display: flex;
+  min-height: 58px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  padding: 9px 13px;
+  border: 2px solid var(--border2);
+  border-radius: 14px;
+  color: var(--ink2);
+  background: var(--card);
+  font-family: 'Nunito', sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+
+.writing-setup-tab strong {
+  font-size: .9rem;
+  font-weight: 900;
+}
+
+.writing-setup-tab small {
+  color: var(--ink3);
+  font-size: .68rem;
+  font-weight: 800;
+}
+
+.writing-setup-tab:first-child.on {
+  border-color: var(--blue);
+  color: #0B7DAF;
+  background: var(--blue-lt);
+}
+
+.writing-setup-tab:last-child.on {
+  border-color: var(--purple);
+  color: var(--purple-dk);
+  background: var(--purple-lt);
+}
+
+.writing-setup-tab.on small { color: currentColor; }
+
+.writing-setup-panel {
+  padding: 13px 12px 1px;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg);
+}
+
+.writing-setup-current {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: -2px 0 15px;
+  padding: 9px 11px;
+  border: 2px solid var(--border2);
+  border-radius: 12px;
+  color: var(--ink2);
+  background: #FFFFFF;
+}
+
+.writing-setup-current > span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  font-size: .68rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.writing-setup-current strong {
+  color: var(--ink);
+  font-size: .82rem;
+  font-weight: 900;
+}
+
+.writing-setup-current b {
+  flex: 0 0 auto;
+  color: var(--purple-dk);
+  font-size: .75rem;
+  font-weight: 900;
+}
+
+.writing-status-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 17px;
+}
+
+.writing-status-options .speaking-pool-option {
+  min-height: 52px;
+}
+
 .writing-setup-divider {
   height: 2px;
-  margin: 4px 0 14px;
+  margin: 0 0 14px;
   border-radius: 2px;
   background: var(--border);
 }
@@ -498,20 +659,45 @@
 }
 
 .writing-setup-category-list {
-  margin: 0 -6px 14px;
-  padding: 4px 6px 10px;
+  grid-template-columns: 1fr;
+  margin: 0 -6px 8px;
+  padding: 4px 6px 7px;
+  background: transparent;
+}
+
+.writing-setup-category-list .cat-item,
+.writing-setup-category-list > .cat-all {
+  grid-column: 1;
+  min-height: 52px;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 31px 9px 13px;
+  text-align: left;
+}
+
+.writing-setup-category-list .cat-item-name {
+  flex: 1;
+  color: currentColor;
+  font-size: .82rem;
+  font-weight: 900;
+}
+
+.writing-setup-category-list .cat-item-count {
+  flex: 0 0 auto;
+  font-size: .7rem;
+  white-space: nowrap;
 }
 
 .writing-setup-category-list > .cat-all {
-  grid-column: 1 / -1;
-  min-height: 58px;
+  min-height: 52px;
 }
 
 .writing-setup-sheet .btn-close {
   position: sticky;
   bottom: 0;
   z-index: 2;
-  margin-top: 2px;
+  margin-top: 12px;
 }
 
 .compact-go {
@@ -628,9 +814,9 @@
   white-space: nowrap;
 }
 
-.speaking-card { border-color: var(--green); }
-.speaking-card.part-2 { border-color: var(--blue); }
-.speaking-card.part-3 { border-color: var(--purple); }
+.speaking-card { border-color: var(--blue); }
+.speaking-card.part-2 { border-color: var(--purple); }
+.speaking-card.part-3 { border-color: var(--pink); }
 
 .speaking-question {
   font-family: 'Rubik', sans-serif;
@@ -644,7 +830,8 @@
 .cue-box-large { margin-top: 17px; }
 
 /* Speaking Hint follows the original New Word sentence-carousel pattern:
-   one compact note direction at a time, dots + next, with no stacked answers. */
+   one compact note direction at a time. A numeric counter stays readable even
+   when a question has many useful directions; dots would create a visual cap. */
 .speaking-hint-panel {
   --intro-accent: var(--yellow);
   margin-top: 17px;
@@ -663,6 +850,22 @@
   font-size: .74rem;
   font-weight: 900;
   letter-spacing: .35px;
+  white-space: nowrap;
+}
+
+.speaking-hint-counter {
+  display: inline-flex;
+  min-width: 42px;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border: 1.5px solid var(--yellow);
+  border-radius: 999px;
+  color: var(--yellow-dk);
+  background: var(--card);
+  font-size: .7rem;
+  font-weight: 900;
   white-space: nowrap;
 }
 
@@ -737,7 +940,7 @@
 }
 
 #q-area.speaking-area.speaking-hint-open {
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .notice-card {
@@ -1021,6 +1224,17 @@ button:disabled { cursor: default; opacity: .48; }
   padding: 13px 14px;
 }
 
+.writing-flow-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.writing-flow-skip {
+  width: 100%;
+  text-align: center;
+}
+
 .writing-question-meta {
   padding: 10px 15px 8px;
   color: var(--ink3);
@@ -1089,6 +1303,18 @@ button:disabled { cursor: default; opacity: .48; }
   --writing-accent: var(--teal);
   --writing-accent-dark: var(--teal-dk);
   --writing-accent-soft: var(--teal-lt);
+}
+
+.writing-color-water {
+  --writing-accent: var(--water);
+  --writing-accent-dark: var(--water-dk);
+  --writing-accent-soft: var(--water-lt);
+}
+
+.writing-color-amber {
+  --writing-accent: var(--amber);
+  --writing-accent-dark: var(--amber-dk);
+  --writing-accent-soft: var(--amber-lt);
 }
 
 .writing-question-task {
@@ -1282,21 +1508,21 @@ button:disabled { cursor: default; opacity: .48; }
   font-weight: 700;
 }
 
-.keyword-sequence-dots {
-  display: inline-flex;
-  gap: 5px;
-}
-
-.keyword-sequence-dots i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
+.keyword-sequence-track {
+  width: min(118px, 42%);
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
   background: var(--border2);
-  transition: transform .2s ease, background .2s ease;
 }
 
-.keyword-sequence-dots i.on { background: var(--intro-accent); }
-.keyword-sequence-dots i.newest { transform: scale(1.45); }
+.keyword-sequence-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--intro-accent);
+  transition: width .24s ease;
+}
 
 .writing-flow-next:disabled {
   border-color: var(--border2);

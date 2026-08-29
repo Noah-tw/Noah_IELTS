@@ -38,8 +38,11 @@
       return;
     }
     if (kind === "writing-reveal") {
-      const step = Math.max(0, Math.min(2, Number(variant) || 0));
-      const frequency = [659, 740, 831][step];
+      // The reveal list has no fixed branch cap. Cycle through six distinct
+      // notes instead of clamping every branch after the fourth to one tone.
+      const frequencies = [659, 740, 831, 932, 1047, 1175];
+      const step = Math.max(0, Number(variant) || 0) % frequencies.length;
+      const frequency = frequencies[step];
       tone(frequency, 0.11, 0.13, 0, "triangle");
       tone(frequency * 2, 0.065, 0.04, 0.018, "sine");
       return;
@@ -126,7 +129,7 @@
     if (G.state.module === "writing") return "";
     const item = G.modes.currentSpeaking();
     if (!item) return "";
-    return item.text;
+    return G.utils.speakingSpeechText(item);
   }
 
   function speakCurrent() {
@@ -174,12 +177,15 @@
     else if (action === "repeat-speaking") G.modes.repeatSpeaking();
     else if (action === "open-writing-pools") G.modes.openWritingPools();
     else if (action === "open-writing-setup") G.modes.openWritingSetup();
+    else if (action === "set-writing-setup-task") G.modes.setWritingSetupTask(element.dataset.task);
     else if (action === "set-writing-task-pool") G.modes.setWritingTaskPool(element.dataset.task, element.dataset.pool);
     else if (action === "open-writing-categories") G.modes.openWritingCategories();
-    else if (action === "choose-writing-category") G.modes.setWritingCategory(element.dataset.category);
+    else if (action === "choose-writing-category") G.modes.setWritingCategory(element.dataset.task, element.dataset.category);
     else if (action === "start-writing") G.modes.startWriting();
     else if (action === "start-writing-mode") G.modes.startWritingMode(element.dataset.mode);
     else if (action === "advance-writing-flow") G.modes.advanceWritingFlow();
+    else if (action === "skip-writing-keyword-list") G.modes.skipWritingKeywordList();
+    else if (action === "skip-writing-keywords") G.modes.skipWritingKeywords();
     else if (action === "next-writing-keyword-sentence") G.modes.nextWritingKeywordSentence();
     else if (action === "speak-writing-keyword") G.modes.speakWritingKeyword();
     else if (action === "speak-writing-keyword-list") G.modes.speakWritingKeywordAt(element.dataset.index);
@@ -230,7 +236,15 @@
   }
 
   function onKeyDown(event) {
-    if (event.key === "Escape" && G.state.overlay) G.modes.closeOverlay();
+    if (event.key === "Escape" && G.state.overlay) {
+      G.modes.closeOverlay();
+      return;
+    }
+    if (event.repeat || !["Enter", " "].includes(event.key) || !(event.target instanceof Element)) return;
+    const control = event.target.closest('[role="button"][data-action]');
+    if (!control || control.disabled) return;
+    event.preventDefault();
+    handleAction(control);
   }
 
   G.actions = {

@@ -47,6 +47,7 @@
     G.state.writingSessionSets = [];
     G.state.writingSetIndex = 0;
     G.state.writingRevealed = [];
+    G.state.writingQuestionSkipped = false;
     G.state.writingPhase = "question";
     G.state.writingKeywordIndex = 0;
     G.state.writingKeywordSentenceIndex = 0;
@@ -81,6 +82,7 @@
     G.state.writingSessionSets = [];
     G.state.writingSetIndex = 0;
     G.state.writingRevealed = [];
+    G.state.writingQuestionSkipped = false;
     G.state.writingPhase = "question";
     G.state.writingKeywordIndex = 0;
     G.state.writingKeywordSentenceIndex = 0;
@@ -155,7 +157,9 @@
       : module === "writing" ? G.DATA.writingSets : G.DATA.speakingCards;
     const item = items.find((entry) => entry.id === id);
     if (!item || !G.actions) return;
-    G.actions.speak(module === "reading" ? item.word : module === "writing" ? item.sourceQuestion : item.text);
+    G.actions.speak(module === "reading"
+      ? item.word
+      : module === "writing" ? item.sourceQuestion : G.utils.speakingSpeechText(item));
   }
 
   function speakReviewSentence(id, index) {
@@ -181,7 +185,7 @@
   function setSpeakingPartPool(part, pool) {
     const value = String(part);
     if (!["1", "2", "3"].includes(value)) return;
-    if (!["all", "new", "mastered", "none"].includes(pool)) return;
+    if (!["all", "new", "unfamiliar", "mastered", "none"].includes(pool)) return;
     const pools = speakingPartPools();
     if (pool === "none") {
       pools[value] = null;
@@ -522,6 +526,44 @@
     });
   }
 
+  function skipWritingKeywordList() {
+    const set = currentWritingSet();
+    if (!set || !G.state.writingRunning || G.state.writingPhase !== "keyword-list") return;
+    // stopActiveTools() bumps writingKeywordSequenceToken and cancels any
+    // pending timer/TTS callback, so the in-flight word's onStart/onEnded
+    // (and the 4000ms/8500ms fallbacks racing it) can never fire after this
+    // point and collide with the audio we're about to start for the card
+    // screen below - same guard advanceWritingFlow() already relies on.
+    stopActiveTools();
+    const keywords = Array.isArray(set.keywords) ? set.keywords : [];
+    G.state.writingKeywordVisibleCount = keywords.length;
+    G.state.writingKeywordNewestIndex = -1;
+    G.state.writingKeywordSequenceComplete = true;
+    G.state.writingPhase = "keyword-card";
+    G.state.writingKeywordIndex = 0;
+    G.state.writingKeywordSentenceIndex = 0;
+    render();
+    speakWritingKeyword();
+  }
+
+  function skipWritingKeywords() {
+    const set = currentWritingSet();
+    if (!set || !G.state.writingRunning || !["keyword-list", "keyword-card"].includes(G.state.writingPhase)) return;
+    // This is a genuine opt-out from the whole Additional Keywords section,
+    // distinct from skipWritingKeywordList(), which only ends the animated
+    // one-by-one introduction and opens the cards. Cancel the active TTS and
+    // invalidate every pending list callback before entering paraphrase.
+    stopActiveTools();
+    const keywords = Array.isArray(set.keywords) ? set.keywords : [];
+    G.state.writingKeywordVisibleCount = keywords.length;
+    G.state.writingKeywordNewestIndex = -1;
+    G.state.writingKeywordSequenceComplete = true;
+    G.state.writingPhase = "paraphrase";
+    G.state.writingIndex = 0;
+    G.state.writingRevealed = [];
+    render();
+  }
+
   function resumeWritingKeywordSequence() {
     stopWritingKeywordSequence();
     const token = writingKeywordSequenceToken;
@@ -541,14 +583,25 @@
     return G.state.writingTaskPools;
   }
 
+  function writingTypeFilters() {
+    const filters = G.state.writingTypeFilters;
+    if (!filters || typeof filters !== "object" || Array.isArray(filters)) {
+      G.state.writingTypeFilters = { 1: "all", 2: "all" };
+    }
+    return G.state.writingTypeFilters;
+  }
+
   function openWritingPools() {
     stopActiveTools();
     G.state.overlay = "writing-pools";
     render();
   }
 
-  function openWritingSetup() {
+  function openWritingSetup(task) {
     stopActiveTools();
+    const requestedTask = String(task || "");
+    if (["1", "2"].includes(requestedTask)) G.state.writingSetupTask = requestedTask;
+    else if (!["1", "2"].includes(String(G.state.writingSetupTask))) G.state.writingSetupTask = "1";
     G.state.overlay = "writing-setup";
     render();
   }
@@ -556,14 +609,14 @@
   function setWritingTaskPool(task, pool) {
     const value = String(task);
     if (!["1", "2"].includes(value)) return;
-    if (!["all", "new", "mastered", "none"].includes(pool)) return;
+    if (!["all", "new", "unfamiliar", "mastered", "none"].includes(pool)) return;
     const pools = writingTaskPools();
     if (pool === "none") {
       pools[value] = null;
       render();
       return;
     }
-    if (!G.utils.writingPool(value, pool, G.state.writingCategory).length) {
+    if (!G.utils.writingPool(value, pool, writingTypeFilters()).length) {
       const labels = { all: "All", new: "New", unfamiliar: "Practice", mastered: "Mastered" };
       G.actions.toast(`No ${labels[pool]} questions are available for Task ${value}.`);
       return;
@@ -573,13 +626,35 @@
   }
 
   function openWritingCategories() {
-    stopActiveTools();
-    G.state.overlay = "writing-categories";
+    openWritingSetup();
+  }
+
+  function setWritingSetupTask(task) {
+    const value = String(task);
+    if (!["1", "2"].includes(value)) return;
+    G.state.writingSetupTask = value;
     render();
   }
 
-  function setWritingCategory(category) {
-    G.state.writingCategory = String(category || "all");
+  function setWritingCategory(task, category) {
+    let taskValue = String(task || "");
+    let categoryValue = String(category || "all");
+
+    // Accept the earlier "1:Maps & Plans" action shape while an already-open
+    // page is upgrading in memory. New UI actions always send Task separately.
+    if (!["1", "2"].includes(taskValue)) {
+      const legacy = taskValue;
+      const separator = legacy.indexOf(":");
+      if (separator < 0) return;
+      taskValue = legacy.slice(0, separator);
+      categoryValue = legacy.slice(separator + 1) || "all";
+    }
+    if (!["1", "2"].includes(taskValue)) return;
+    const validCategories = new Set(G.DATA.writingSets
+      .filter((set) => set.task === Number(taskValue))
+      .map((set) => set.category));
+    if (categoryValue !== "all" && !validCategories.has(categoryValue)) return;
+    writingTypeFilters()[taskValue] = categoryValue;
     render();
   }
 
@@ -590,7 +665,7 @@
     if (!["full", "1", "2"].includes(value)) return;
     const pools = writingTaskPools();
     const previous = G.progress.getWritingLast();
-    const sessionSets = G.utils.writingConfiguredQueue(value, pools, G.state.writingCategory, previous);
+    const sessionSets = G.utils.writingConfiguredQueue(value, pools, writingTypeFilters(), previous);
     const incompleteFull = value === "full" && sessionSets.length !== 2;
     if (!sessionSets.length || incompleteFull) {
       if (value === "full") G.actions.toast("Full Writing needs an available question in both Tasks.");
@@ -612,6 +687,7 @@
     G.state.writingDeck = firstSet.points.slice();
     G.state.writingIndex = 0;
     G.state.writingRevealed = [];
+    G.state.writingQuestionSkipped = false;
     G.state.writingPhase = "question";
     G.state.writingKeywordIndex = 0;
     G.state.writingKeywordSentenceIndex = 0;
@@ -656,6 +732,14 @@
   function advanceWritingFlow() {
     const set = currentWritingSet();
     if (!set || !G.state.writingRunning) return;
+    // A premature/duplicate tap must be a harmless no-op.  Previously the
+    // shared stopActiveTools() call ran first, invalidated the sequence token
+    // and cancelled its safety timer, then this branch returned because the
+    // list was not complete.  That left the learner permanently stranded on
+    // the list if a touch event arrived while the button state and final TTS
+    // callback were crossing.  Keep the active sequence alive until leaving
+    // the phase is actually allowed.
+    if (G.state.writingPhase === "keyword-list" && !G.state.writingKeywordSequenceComplete) return;
     stopActiveTools();
     if (G.state.writingPhase === "question") {
       G.state.writingPhase = "keyword-list";
@@ -663,7 +747,6 @@
       return;
     }
     if (G.state.writingPhase === "keyword-list") {
-      if (!G.state.writingKeywordSequenceComplete) return;
       G.state.writingPhase = "keyword-card";
       G.state.writingKeywordIndex = 0;
       G.state.writingKeywordSentenceIndex = 0;
@@ -729,9 +812,14 @@
   function advanceWritingDeck(counted) {
     const completedIndex = G.state.writingIndex;
     if (counted) G.state.writingDone += 1;
+    else G.state.writingQuestionSkipped = true;
     if (completedIndex >= G.state.writingDeck.length - 1) {
       const completedSet = currentWritingSet();
-      if (completedSet) G.progress.markWriting(completedSet.id, true);
+      // A question is a successful attempt only when every paraphrase point
+      // was fully revealed. Keyword study remains optional, but skipping even
+      // one paraphrase must keep the question in Practice instead of quietly
+      // accumulating a false correct answer and eventually becoming Mastered.
+      if (completedSet) G.progress.markWriting(completedSet.id, !G.state.writingQuestionSkipped);
       G.state.writingQuestionsDone += 1;
       if (G.state.writingSetIndex < G.state.writingSessionSets.length - 1) {
         G.state.writingSetIndex += 1;
@@ -739,6 +827,7 @@
         G.state.writingDeck = nextSet && Array.isArray(nextSet.points) ? nextSet.points.slice() : [];
         G.state.writingIndex = 0;
         G.state.writingRevealed = [];
+        G.state.writingQuestionSkipped = false;
         G.state.writingPhase = "question";
         G.state.writingKeywordIndex = 0;
         G.state.writingKeywordSentenceIndex = 0;
@@ -842,10 +931,13 @@
     openWritingSetup,
     setWritingTaskPool,
     openWritingCategories,
+    setWritingSetupTask,
     setWritingCategory,
     startWriting,
     startWritingMode,
     advanceWritingFlow,
+    skipWritingKeywordList,
+    skipWritingKeywords,
     nextWritingKeywordSentence,
     speakWritingKeyword,
     speakWritingKeywordAt,
