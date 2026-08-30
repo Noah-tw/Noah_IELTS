@@ -1945,7 +1945,7 @@ add("prompt", /The (?:(?:first|second|third|two|three) )?(?:bar )?(?:charts?|gra
     saveProgress();
   }
 
-  G.VERSION = "4.12.3-v43-button-sound-repair";
+  G.VERSION = "4.12.4-v43-wordark-button-sound";
   G.DATA = { speakingTests, speakingCards, speakingHints, readingWords, writingSets, writingKeywords, writingPoints, audit };
   G.utils = { shuffle, escapeHtml, speakingSpeechText, speakingPool, speakingQueue, speakingConfiguredQueue, writingPool, writingConfiguredQueue };
   G.progress = {
