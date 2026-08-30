@@ -610,7 +610,10 @@
       <section class="writing-flow-screen writing-question-screen" aria-label="Writing question card">
         <article class="intro-card writing-question-card">
           <div class="intro-badge">Writing Question</div>
-          <div class="writing-question-meta">${esc(set.sourceLabel)}</div>
+          <div class="writing-question-meta">
+            <span class="writing-question-meta-label">${esc(set.sourceLabel)}</span>
+            <button type="button" class="wc-tts writing-question-tts" data-action="speak-writing-question" aria-label="Read writing question aloud">${G.state.speechActive ? "■" : "🔊"}</button>
+          </div>
           <div class="intro-sent-wrap writing-question-wrap">
             <div class="writing-question-copy">
               ${segments.map((segment) => segment.tone

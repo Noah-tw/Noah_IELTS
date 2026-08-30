@@ -702,12 +702,19 @@
     G.state.screen = "module";
     G.state.tab = "play";
     render();
+    speakWritingQuestion();
   }
 
   function startWritingMode(mode) {
     if (!["full", "1", "2"].includes(String(mode))) return;
     G.state.overlay = null;
     startWriting(String(mode));
+  }
+
+  function speakWritingQuestion() {
+    const set = currentWritingSet();
+    const question = set ? String(set.sourceQuestion || "").trim() : "";
+    if (question && G.actions) G.actions.speak(question);
   }
 
   function speakWritingKeyword() {
@@ -854,6 +861,7 @@
     stopActiveTools();
     advanceWritingDeck(true);
     render();
+    if (G.state.writingRunning && G.state.writingPhase === "question") speakWritingQuestion();
   }
 
   function skipWriting() {
@@ -861,6 +869,7 @@
     stopActiveTools();
     advanceWritingDeck(false);
     render();
+    if (G.state.writingRunning && G.state.writingPhase === "question") speakWritingQuestion();
   }
 
   function repeatWriting() {
@@ -935,6 +944,7 @@
     setWritingCategory,
     startWriting,
     startWritingMode,
+    speakWritingQuestion,
     advanceWritingFlow,
     skipWritingKeywordList,
     skipWritingKeywords,

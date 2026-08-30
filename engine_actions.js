@@ -305,6 +305,10 @@
     else if (action === "choose-writing-category") G.modes.setWritingCategory(element.dataset.task, element.dataset.category);
     else if (action === "start-writing") G.modes.startWriting();
     else if (action === "start-writing-mode") G.modes.startWritingMode(element.dataset.mode);
+    else if (action === "speak-writing-question") {
+      if (G.state.speechActive) stopSpeech(true);
+      else G.modes.speakWritingQuestion();
+    }
     else if (action === "advance-writing-flow") G.modes.advanceWritingFlow();
     else if (action === "skip-writing-keyword-list") G.modes.skipWritingKeywordList();
     else if (action === "skip-writing-keywords") G.modes.skipWritingKeywords();

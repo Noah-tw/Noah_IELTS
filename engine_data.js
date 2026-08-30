@@ -1405,14 +1405,7 @@ add("prompt", /The (?:(?:first|second|third|two|three) )?(?:bar )?(?:charts?|gra
 
   function speakingSpeechText(item) {
     if (!item) return "";
-    const prompt = String(item.text || "").trim();
-    if (Number(item.part) !== 2) return prompt;
-    return [
-      prompt,
-      "You should say",
-      ...(Array.isArray(item.bullets) ? item.bullets : []),
-      String(item.closing || "").trim(),
-    ].filter(Boolean).join(". ");
+    return String(item.text || "").trim();
   }
 
   function hintVersions(id) {
@@ -1945,7 +1938,7 @@ add("prompt", /The (?:(?:first|second|third|two|three) )?(?:bar )?(?:charts?|gra
     saveProgress();
   }
 
-  G.VERSION = "4.12.4-v43-wordark-button-sound";
+  G.VERSION = "4.13.0-v44-writing-question-tts";
   G.DATA = { speakingTests, speakingCards, speakingHints, readingWords, writingSets, writingKeywords, writingPoints, audit };
   G.utils = { shuffle, escapeHtml, speakingSpeechText, speakingPool, speakingQueue, speakingConfiguredQueue, writingPool, writingConfiguredQueue };
   G.progress = {
