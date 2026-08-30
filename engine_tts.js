@@ -119,6 +119,7 @@
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = nativeLocale(lang);
     utterance.rate = rate;
+    utterance.volume = 1;
     activeUtterance = utterance;
     const deadline = Date.now() + 600;
 
@@ -264,6 +265,8 @@
       const element = new Audio(source.url);
       activeElement = element;
       element.playbackRate = playbackRate;
+      element.muted = false;
+      element.volume = 1;
       element.setAttribute("playsinline", "");
       let settled = false;
       function fail(reason, error) {

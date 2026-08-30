@@ -1165,23 +1165,10 @@
     if (available <= 0) return;
 
     word.style.maxWidth = `${available}px`;
-    word.style.whiteSpace = "nowrap";
+    word.style.removeProperty("font-size");
+    word.style.whiteSpace = "normal";
     word.style.wordBreak = "normal";
-    word.style.overflowWrap = "normal";
-
-    const startSize = parseFloat(getComputedStyle(word).fontSize);
-    let size = startSize;
-    const minimum = Math.max(12, startSize * 0.58);
-    while (word.scrollWidth > available && size > minimum) {
-      size -= 1;
-      word.style.fontSize = `${size}px`;
-    }
-
-    if (word.scrollWidth > available) {
-      word.style.whiteSpace = "normal";
-      word.style.wordBreak = "break-word";
-      word.style.overflowWrap = "anywhere";
-    }
+    word.style.overflowWrap = "break-word";
   }
 
   function scheduleKeywordCardFit() {

@@ -4,8 +4,11 @@
   const G = window.NoahIELTS;
   let audioContext = null;
   let speechToken = 0;
+  let speechDelayTimer = null;
+  let soundBusyUntil = 0;
   let toastId = null;
   let bound = false;
+  const soundReleaseGapMs = 70;
 
   function context() {
     const AudioCtor = window.AudioContext || window.webkitAudioContext;
@@ -29,6 +32,11 @@
     gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
     oscillator.start(start);
     oscillator.stop(start + duration);
+    // TTS must not begin while this oscillator is still using the device's
+    // audio output.  A short release gap also gives mobile browsers time to
+    // hand full volume back to media/speech playback.
+    const soundEnd = Date.now() + Math.ceil(((delay || 0) + duration) * 1000) + soundReleaseGapMs;
+    soundBusyUntil = Math.max(soundBusyUntil, soundEnd);
   }
 
   function playSound(kind, variant) {
@@ -86,6 +94,8 @@
 
   function stopSpeech(renderAfter) {
     speechToken += 1;
+    clearTimeout(speechDelayTimer);
+    speechDelayTimer = null;
     if (G.tts) G.tts.stop();
     else if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     if (G.state) G.state.speechActive = false;
@@ -108,15 +118,29 @@
     G.state.speechActive = true;
     G.state.notice = "";
     if (renderUi) G.render();
-    G.tts.say(cleanSpeech(text), "en", Number(settings.rate) || 0.88, settings.patient !== false, function () {
+
+    function beginSpeechWhenSoundIsClear() {
       if (token !== speechToken) return;
-      G.state.speechActive = false;
-      if (renderUi) G.render();
-      if (onEnded) onEnded();
-    }, function () {
-      if (token !== speechToken) return;
-      if (onStart) onStart();
-    });
+      const remaining = soundBusyUntil - Date.now();
+      if (remaining > 0) {
+        // Recheck when the timer fires: another quick tap may have extended
+        // the sound-effect window after this speech request was queued.
+        speechDelayTimer = setTimeout(beginSpeechWhenSoundIsClear, remaining);
+        return;
+      }
+      speechDelayTimer = null;
+      G.tts.say(cleanSpeech(text), "en", Number(settings.rate) || 0.88, settings.patient !== false, function () {
+        if (token !== speechToken) return;
+        G.state.speechActive = false;
+        if (renderUi) G.render();
+        if (onEnded) onEnded();
+      }, function () {
+        if (token !== speechToken) return;
+        if (onStart) onStart();
+      });
+    }
+
+    beginSpeechWhenSoundIsClear();
   }
 
   function unlockSpeech(skipProbe) {
@@ -129,7 +153,7 @@
     if (G.state.module === "writing") return "";
     const item = G.modes.currentSpeaking();
     if (!item) return "";
-    return G.utils.speakingSpeechText(item);
+    return item.text;
   }
 
   function speakCurrent() {

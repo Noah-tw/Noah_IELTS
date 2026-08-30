@@ -159,7 +159,7 @@
     if (!item || !G.actions) return;
     G.actions.speak(module === "reading"
       ? item.word
-      : module === "writing" ? item.sourceQuestion : G.utils.speakingSpeechText(item));
+      : module === "writing" ? item.sourceQuestion : item.text);
   }
 
   function speakReviewSentence(id, index) {

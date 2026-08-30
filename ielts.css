@@ -1203,7 +1203,11 @@ button:disabled { cursor: default; opacity: .48; }
 }
 
 #q-area.writing-area {
-  overflow: hidden;
+  /* Larger keyword text may need one more line on a narrow phone.  Keep the
+     writing flow readable and let the area scroll only when it genuinely
+     exceeds the available height instead of shrinking the text to fit. */
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: clamp(9px, 2.2vh, 16px) 14px;
 }
 
@@ -1357,14 +1361,14 @@ button:disabled { cursor: default; opacity: .48; }
   font-weight: 900;
 }
 
-/* The original New Word Card keeps the headword on one line and lets the
-   renderer shrink it from its measured width. The JS measurement is the
-   final guard; these rules prevent an initial infrastructure / e flash. */
+/* Writing keywords stay at a readable phone size.  Multi-word terms wrap at
+   word boundaries instead of being forced onto one line and shrunk. */
 .keyword-card-screen .intro-word {
   max-width: 100%;
-  white-space: nowrap;
+  font-size: clamp(1.25rem, 7vw, 2.2rem);
+  white-space: normal;
   word-break: normal;
-  overflow-wrap: normal;
+  overflow-wrap: break-word;
 }
 
 .keyword-tip { text-align: left; }
@@ -1465,15 +1469,16 @@ button:disabled { cursor: default; opacity: .48; }
 .keyword-list-term {
   color: var(--ink);
   font-family: 'Nunito', sans-serif;
-  font-size: .96rem;
-  font-weight: 600;
-  line-height: 1.25;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .keyword-list-item small {
   color: var(--ink3);
-  font-size: .66rem;
+  font-size: .8rem;
   font-weight: 700;
+  line-height: 1.35;
 }
 
 .keyword-list-zh {

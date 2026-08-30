@@ -1945,7 +1945,7 @@ add("prompt", /The (?:(?:first|second|third|two|three) )?(?:bar )?(?:charts?|gra
     saveProgress();
   }
 
-  G.VERSION = "4.12.0-v43-speaking-flow-repair";
+  G.VERSION = "4.12.2-v43-audio-coordination";
   G.DATA = { speakingTests, speakingCards, speakingHints, readingWords, writingSets, writingKeywords, writingPoints, audit };
   G.utils = { shuffle, escapeHtml, speakingSpeechText, speakingPool, speakingQueue, speakingConfiguredQueue, writingPool, writingConfiguredQueue };
   G.progress = {
