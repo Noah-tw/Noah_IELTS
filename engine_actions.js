@@ -3,24 +3,59 @@
 
   const G = window.NoahIELTS;
   let audioContext = null;
+  let audioResumePromise = null;
+  let pendingSoundStarts = 0;
   let speechToken = 0;
   let speechDelayTimer = null;
   let soundBusyUntil = 0;
   let toastId = null;
   let bound = false;
   const soundReleaseGapMs = 70;
+  const buttonSoundDurationMs = 65;
+  const activeButtonSounds = new Set();
+  const buttonSoundUrl = "data:audio/wav;base64,UklGRiwCAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQgCAACAgYWIiIR+d3JxcnZ8hIyUm5yVhnBaTU9hgKG5wLOYd1xPTlhneIiZp7CvoohoTD1CW4ClvcGyl3hgVFNcaniIlqOrq5+Ia1FESF+Aobe7rZR5Y1hYYGx5h5Sgp6abh21WSk5igJ6xtamSemZcXGNueoaSnKOimYZvWk9TZYCbrLClkHppYGBmcHuFkJmfn5aFcV5UWGiAmKiroY97a2NjaXF7hY6XnJyUhXJhWVxqgJakpp6Ne21mZmtzfISNlZmZkoR0ZF1fbICToKObjHxvaWhtdHyEjJOXl5CEdWdgY26AkZ2fmIt8cWtrb3V8hIuRlZSPhHZqY2ZwgJCanJaKfXJtbXF2fYOJj5KSjYN3bGZocoCOl5mTiX10b29yd32DiY2RkIyDeG5pa3OAjZWXkYh9dXFxdHh9g4iMj4+Lg3lwa211gIuTlJCHfnZycnV5foKHi42NiYJ5cW1vdoCKkZKOhn53dHR2en6ChoqMjImCenNvcHeAiY+QjYZ+eHV1d3p+goaJi4uIgnt0cXJ4gIiOj4uFfnl2dnh7foKFiIqKh4J7dXJzeYCHjI2KhX55d3d5e36ChYeJiYaCfHZ0dXmAh4uMiYR/enh4eXx/gYSGiIiGgXx3dXZ6gIaKi4iEf3t5eXp8f4GEhoeHhYF9eHZ3e4CFiYqHg397eXl7fX+Bg4WGhoWB";
 
   function context() {
     const AudioCtor = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtor) return null;
-    if (!audioContext) audioContext = new AudioCtor();
-    if (audioContext.state === "suspended") audioContext.resume().catch(function () {});
+    try {
+      if (!audioContext) audioContext = new AudioCtor();
+    } catch (_error) {
+      return null;
+    }
     return audioContext;
   }
 
-  function tone(frequency, duration, volume, delay, type) {
-    const ctx = context();
-    if (!ctx) return;
+  function ensureAudioContextRunning(ctx) {
+    if (!ctx) return Promise.resolve(null);
+    if (ctx.state === "running") return Promise.resolve(ctx);
+    if (audioResumePromise) return audioResumePromise;
+    audioResumePromise = new Promise(function (resolve) {
+      let settled = false;
+      function finish(value) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeoutId);
+        resolve(value);
+      }
+      const timeoutId = setTimeout(function () { finish(null); }, 600);
+      let result;
+      try { result = ctx.resume(); }
+      catch (_error) { finish(null); return; }
+      Promise.resolve(result).then(function () {
+        finish(ctx.state === "running" ? ctx : null);
+      }).catch(function () { finish(null); });
+    }).finally(function () { audioResumePromise = null; });
+    return audioResumePromise;
+  }
+
+  function markSoundBusy(duration, delay) {
+    const soundEnd = Date.now() + Math.ceil(((delay || 0) + duration) * 1000) + soundReleaseGapMs;
+    soundBusyUntil = Math.max(soundBusyUntil, soundEnd);
+  }
+
+  function scheduleTone(ctx, frequency, duration, volume, delay, type) {
+    if (!ctx || ctx.state !== "running") return;
     const oscillator = ctx.createOscillator();
     const gain = ctx.createGain();
     const start = ctx.currentTime + (delay || 0);
@@ -32,11 +67,67 @@
     gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
     oscillator.start(start);
     oscillator.stop(start + duration);
-    // TTS must not begin while this oscillator is still using the device's
-    // audio output.  A short release gap also gives mobile browsers time to
-    // hand full volume back to media/speech playback.
-    const soundEnd = Date.now() + Math.ceil(((delay || 0) + duration) * 1000) + soundReleaseGapMs;
-    soundBusyUntil = Math.max(soundBusyUntil, soundEnd);
+    markSoundBusy(duration, delay);
+  }
+
+  function tone(frequency, duration, volume, delay, type) {
+    const ctx = context();
+    if (!ctx) return;
+    markSoundBusy(duration, delay);
+    if (ctx.state === "running") {
+      scheduleTone(ctx, frequency, duration, volume, delay, type);
+      return;
+    }
+    // Safari/PWA commonly creates a suspended context.  Do not schedule a
+    // 50ms oscillator until resume() has actually completed, or the entire
+    // button sound can expire while the context clock is still stopped.
+    pendingSoundStarts += 1;
+    ensureAudioContextRunning(ctx).then(function (ready) {
+      if (ready) scheduleTone(ready, frequency, duration, volume, delay, type);
+    }).finally(function () {
+      pendingSoundStarts = Math.max(0, pendingSoundStarts - 1);
+    });
+  }
+
+  function playButtonSound() {
+    markSoundBusy(buttonSoundDurationMs / 1000, 0);
+    if (typeof Audio === "undefined") {
+      tone(720, 0.075, 0.16, 0, "sine");
+      return;
+    }
+    let element;
+    try { element = new Audio(buttonSoundUrl); }
+    catch (_error) {
+      tone(720, 0.075, 0.16, 0, "sine");
+      return;
+    }
+    element.preload = "auto";
+    element.playbackRate = 1;
+    element.muted = false;
+    element.volume = 0.68;
+    element.setAttribute("playsinline", "");
+    element.setAttribute("webkit-playsinline", "");
+    activeButtonSounds.add(element);
+    let finished = false;
+    function release() {
+      if (finished) return;
+      finished = true;
+      activeButtonSounds.delete(element);
+      element.onended = null;
+      element.onerror = null;
+    }
+    function fallback() {
+      if (finished) return;
+      release();
+      tone(720, 0.075, 0.16, 0, "sine");
+    }
+    element.onended = release;
+    element.onerror = fallback;
+    let result;
+    try { result = element.play(); }
+    catch (_error) { fallback(); return; }
+    if (result && typeof result.catch === "function") result.catch(fallback);
+    setTimeout(release, 600);
   }
 
   function playSound(kind, variant) {
@@ -78,7 +169,7 @@
       tone(1047, 0.2, 0.22, 0.27);
       return;
     }
-    tone(1050, 0.05, 0.1);
+    playButtonSound();
   }
 
   function cleanSpeech(text) {
@@ -121,6 +212,10 @@
 
     function beginSpeechWhenSoundIsClear() {
       if (token !== speechToken) return;
+      if (pendingSoundStarts > 0) {
+        speechDelayTimer = setTimeout(beginSpeechWhenSoundIsClear, 25);
+        return;
+      }
       const remaining = soundBusyUntil - Date.now();
       if (remaining > 0) {
         // Recheck when the timer fires: another quick tap may have extended
